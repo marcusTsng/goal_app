@@ -46,7 +46,9 @@ Task.printTasks()
 
 ### SPRITES AND OTHER VARIABLES
 BG_COLOUR = (0,0,0)
-sprite = Sprite("placeholder.png", 100, 200)
+# sprite = Sprite("placeholder.png", 100, 200)
+sprite = RectSprite((255,255,255), 100, 200, 0, 0)
+img = ImageSprite("placeholder.png", 300, 300)
 
 ### MAIN GAME LOOP
 running = True
