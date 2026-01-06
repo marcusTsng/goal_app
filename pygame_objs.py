@@ -87,7 +87,7 @@ class Tile(ImageSprite):
     center_tile = None
 
     def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL):
-        super().__init__("Terrain/Tile3.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color)
+        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color)
         self.relative_x = relative_x
         self.relative_y = relative_y
         if not Tile.center_tile: 
