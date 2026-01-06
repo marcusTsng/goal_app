@@ -50,9 +50,7 @@ sprite = RectSprite((255,255,255), 100, 100, 0, 0)
 img = ImageSprite("placeholder.png", 300, 300, (255,0,0,100))
 button = Button((200,200,200), 100, 50, 200, 100)
 
-ImageSprite("Terrain/Tile.png", 200, 200, (255,0,0,100))
-
-center_tile = Tile(color=(0,0,0))
+center_tile = Tile(color=(255,255,255))
 tile1 = Tile(0, 1)
 tile2 = Tile(0, -1)
 tile3 = Tile(1, 0)
