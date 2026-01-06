@@ -46,9 +46,12 @@ Task.printTasks()
 
 ### SPRITES AND OTHER VARIABLES
 BG_COLOUR = (0,0,0)
-# sprite = Sprite("placeholder.png", 100, 200)
-sprite = RectSprite((255,255,255), 100, 200, 0, 0)
-img = ImageSprite("placeholder.png", 300, 300)
+sprite = RectSprite((255,255,255), 100, 100, 0, 0)
+img = ImageSprite("placeholder.png", 300, 300, (255,0,0,100))
+button = Button((200,200,200), 100, 50, 200, 100)
+
+def test(): print("hello")
+button.set_function(test)
 
 ### MAIN GAME LOOP
 running = True
@@ -56,7 +59,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            Button.check_all_hovers()
     screen.fill(BG_COLOUR)
     Sprite.displaySprites()
 
