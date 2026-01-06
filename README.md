@@ -11,3 +11,7 @@ routine: add something or build onto something
 
 
 cubes - diagonal (polytopia style)
+
+
+Top left -> Bottom right: X AXIS
+Bottom left -> Top right: Y AXIS

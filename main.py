@@ -45,13 +45,26 @@ task2.complete()
 Task.printTasks()
 
 ### SPRITES AND OTHER VARIABLES
-BG_COLOUR = (0,0,0)
+
 sprite = RectSprite((255,255,255), 100, 100, 0, 0)
 img = ImageSprite("placeholder.png", 300, 300, (255,0,0,100))
 button = Button((200,200,200), 100, 50, 200, 100)
 
-def test(): print("hello")
-button.set_function(test)
+ImageSprite("Terrain/Tile.png", 200, 200, (255,0,0,100))
+
+center_tile = Tile(color=(0,0,0))
+tile1 = Tile(0, 1)
+tile2 = Tile(0, -1)
+tile3 = Tile(1, 0)
+tile4 = Tile(-1, 0)
+t = 1
+
+def addTile(): 
+    global t
+    t += 1
+    Tile(t, 0)
+
+button.set_function(addTile)
 
 ### MAIN GAME LOOP
 running = True

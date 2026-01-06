@@ -1,6 +1,11 @@
+# CONSTANTS
+BG_COLOUR = (0,0,0)
+SCREEN_WIDTH, SCREEN_HEIGHT = 414, 896
+TILE_COL = (255, 0, 0)
+
 # SETUP
 import pygame 
-screen = pygame.display.set_mode((414, 896))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # SPRITE CLASSES
 class Sprite:
@@ -34,7 +39,7 @@ class ImageSprite(Sprite):
             self.img = pygame.image.load(f"Assets/{path}").convert_alpha()
         except pygame.error as e: 
             self.img = pygame.image.load(f"Assets/placeholder.png").convert_alpha()
-        if tint:self.img.fill((tint), special_flags=pygame.BLEND_ADD)
+        if tint: self.img.fill((tint), special_flags=pygame.BLEND_ADD)
         self.rect = self.img.get_rect(center=(x,y))  
     def display(self):
         screen.blit(self.img, self.rect)
@@ -76,3 +81,16 @@ class Button(RectSprite):
     @staticmethod
     def check_all_hovers():
         for x in Button.buttons: x.check_hover()
+
+# GAME OBJECTS
+class Tile(ImageSprite):
+    center_tile = None
+
+    def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL):
+        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color)
+        self.relative_x = relative_x
+        self.relative_y = relative_y
+        if not Tile.center_tile: 
+            Tile.center_tile = self
+        else:
+            self.rect.center = (SCREEN_WIDTH / 2 + 50 * relative_x + 50 * relative_y, SCREEN_HEIGHT / 2 + 32 * relative_x - 32 * relative_y)
