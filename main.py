@@ -47,10 +47,10 @@ Task.printTasks()
 
 ### SPRITES AND OTHER VARIABLES
 
-sprite = RectSprite((255,255,255), 100, 100, 0, 0)
+sprite = RectSprite((255,255,255), 100, 100, 0, 0, priority=1)
 img = ImageSprite("placeholder.png", 300, 300, (255,0,0,100))
 # button = Button((200,200,200), 100, 50, 200, 100)
-button = Button("placeholder.png", 150, 150)
+button = Button("placeholder.png", 150, 150, priority=1)
 
 center_tile = Tile(color=(255,255,255))
 # tile1 = Tile(0, 1)
@@ -68,24 +68,25 @@ button.set_function(addTile)
 ### MAIN GAME LOOP
 dragging = False
 button_down_time = 0
-click_threshold = 0.1
+click_threshold = 0.2
 drag_base = (0,0) # for dragging
 
 running = True
 while running:
+    mouse_pos = pygame.mouse.get_pos()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             button_down_time = time.time()
             dragging = True
-            drag_base = pygame.mouse.get_pos()
+            drag_base = mouse_pos
         if event.type == pygame.MOUSEBUTTONUP:
             if time.time() - button_down_time < click_threshold: 
                 Button.check_all_hovers()
             dragging = False
     
-    mouse_pos = pygame.mouse.get_pos()
     
     if dragging and time.time() - button_down_time > click_threshold: 
         dx = mouse_pos[0] - drag_base[0]

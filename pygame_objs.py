@@ -18,12 +18,17 @@ def set_screen_offset(pos):
 # SPRITE CLASSES
 class Sprite:
     active_sprites = []
+    max_priority = 0
 
-    def __init__(self, w, l, x=0, y=0):
+    def __init__(self, w, l, x=0, y=0, priority = 0):
         Sprite.active_sprites.append(self)
+        if priority > Sprite.max_priority: Sprite.max_priority = priority
+        if priority < 0: priority = 0
+
         self.active = True
         self.rect = pygame.Rect(x, y, w, l)   
         self.use_offset = False
+        self.priority = priority
     
     def set_pos(self, x, y):  self.rect.center = (x,y)
     def get_pos(self): return self.rect.center[0], self.rect.center[1]
@@ -37,13 +42,17 @@ class Sprite:
 
     @staticmethod
     def displaySprites():
-        for x in Sprite.active_sprites:
-            if not x.active: x.set_active(False)
-            else: x.display()
+        for p in range(Sprite.max_priority + 1):
+            for x in Sprite.active_sprites:
+                if x.priority != p: continue
+                if not x.active: x.set_active(False)
+                else: x.display()
+
+
 
 class ImageSprite(Sprite):
-    def __init__(self, path, x=0, y=0, tint=None, use_offset=False):
-        super().__init__(0, 0, x, y)
+    def __init__(self, path, x=0, y=0, tint=None, use_offset=False, priority=0):
+        super().__init__(0, 0, x, y, priority)
         try:
             self.img = pygame.image.load(f"Assets/{path}").convert_alpha()
         except pygame.error as e: 
@@ -60,8 +69,8 @@ class ImageSprite(Sprite):
         screen.blit(self.img, pos_rect)
 
 class RectSprite(Sprite):
-    def __init__(self, fill, w, l, x=0, y=0):
-        super().__init__(w, l, x, y)
+    def __init__(self, fill, w, l, x=0, y=0, priority=0):
+        super().__init__(w, l, x, y, priority)
         self.fill = fill
     def display(self):
         pygame.draw.rect(screen, self.fill, self.rect)
@@ -69,8 +78,8 @@ class RectSprite(Sprite):
 # BUTTONS
 class Button(ImageSprite):
     buttons = []
-    def __init__(self, path, x=0, y=0, tint=None, func = None, params = None, use_offset=False):
-        super().__init__(path, x, y, tint, use_offset)
+    def __init__(self, path, x=0, y=0, tint=None, func = None, params = None, use_offset=False, priority=0):
+        super().__init__(path, x, y, tint, use_offset, priority)
         Button.buttons.append(self)
         self.func = func
         self.params = params
@@ -109,8 +118,8 @@ class Tile(Button):
     center_tile = None
     tiles = []
     
-    def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL):
-        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, test, self, True)
+    def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL, priority=0):
+        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, test, self, True, priority)
         self.relative_x = relative_x
         self.relative_y = relative_y
         if not Tile.center_tile: 
