@@ -81,7 +81,7 @@ while running:
             dragging = True
             drag_base = pygame.mouse.get_pos()
         if event.type == pygame.MOUSEBUTTONUP:
-            if not dragging: 
+            if time.time() - button_down_time < click_threshold: 
                 Button.check_all_hovers()
             dragging = False
     
