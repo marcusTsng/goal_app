@@ -2,9 +2,11 @@
 BG_COLOUR = (0,0,0)
 SCREEN_WIDTH, SCREEN_HEIGHT = 414, 896
 TILE_COL = (48, 143, 44)
+SELECTION_TINT = (30,30,30)
 
 # SETUP
 import pygame 
+import random
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # SPRITE CLASSES
@@ -52,20 +54,23 @@ class RectSprite(Sprite):
         pygame.draw.rect(screen, self.fill, self.rect)
 
 # BUTTONS
-class Button(RectSprite):
+class Button(ImageSprite):
     buttons = []
-    def __init__(self, fill, w, l, x=0, y=0, func = None):
-        super().__init__(fill, w, l, x, y)
+    def __init__(self, path, x=0, y=0, tint=None, func = None, params = None):
+        super().__init__(path, x, y, tint)
         Button.buttons.append(self)
         self.func = func
-    def set_function(self, func): self.func = func
+        self.params = params
+    def set_function(self, func, params=None): 
+        self.func = func
+        self.params = params
     def check_hover(self):
         if not self.active: return False
         
         mouse_x, mouse_y = pygame.mouse.get_pos()
         x, y = self.get_pos()
         if (mouse_x > x - self.rect.width / 2 and mouse_x < x + self.rect.width / 2) and (mouse_y > y - self.rect.height / 2 and mouse_y < y + self.rect.height / 2):
-            if self.func: self.func()
+            if self.func: self.func(self.params)
             return True
         return False
     
@@ -82,15 +87,38 @@ class Button(RectSprite):
     def check_all_hovers():
         for x in Button.buttons: x.check_hover()
 
-# GAME OBJECTS
-class Tile(ImageSprite):
-    center_tile = None
+def test(tile): print(tile)
 
+# GAME OBJECTS
+class Tile(Button):
+    center_tile = None
+    tiles = []
+    
     def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL):
-        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color)
+        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, func=test, params=self)
         self.relative_x = relative_x
         self.relative_y = relative_y
         if not Tile.center_tile: 
             Tile.center_tile = self
         else:
             self.rect.center = (SCREEN_WIDTH / 2 + 50 * relative_x + 50 * relative_y, SCREEN_HEIGHT / 2 + 32 * relative_x - 32 * relative_y)
+        Tile.tiles.append(self)
+
+    @staticmethod
+    def get_random_placement():
+        isTaken = True
+        t = None
+        while isTaken:
+            t = Tile.tiles[random.randint(0, len(Tile.tiles) - 1)]
+            ntx = t.relative_x
+            nty = t.relative_y
+            c = random.randint(1,4)
+            if c == 1:  ntx += 1
+            elif c == 2: ntx -= 1
+            elif c == 3: nty += 1
+            elif c == 4: nty -= 1
+            isTaken = False
+            for x in Tile.tiles:
+                if x.relative_x == ntx and x.relative_y == nty: 
+                    isTaken = True
+        return ntx, nty

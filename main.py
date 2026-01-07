@@ -48,19 +48,19 @@ Task.printTasks()
 
 sprite = RectSprite((255,255,255), 100, 100, 0, 0)
 img = ImageSprite("placeholder.png", 300, 300, (255,0,0,100))
-button = Button((200,200,200), 100, 50, 200, 100)
+# button = Button((200,200,200), 100, 50, 200, 100)
+button = Button("placeholder.png", 150, 150)
 
 center_tile = Tile(color=(255,255,255))
-tile1 = Tile(0, 1)
-tile2 = Tile(0, -1)
-tile3 = Tile(1, 0)
-tile4 = Tile(-1, 0)
-t = 1
+# tile1 = Tile(0, 1)
+# tile2 = Tile(0, -1)
+# tile3 = Tile(1, 0)
+# tile4 = Tile(-1, 0)
 
-def addTile(): 
-    global t
-    t += 1
-    Tile(t, 0)
+def addTile():
+    x,y = Tile.get_random_placement() 
+    Tile(x,y)
+for _ in range(5): addTile()
 
 button.set_function(addTile)
 
