@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+import time
 
 from pygame_objs import *
 
@@ -65,15 +66,40 @@ for _ in range(5): addTile()
 button.set_function(addTile)
 
 ### MAIN GAME LOOP
+dragging = False
+button_down_time = 0
+click_threshold = 0.1
+drag_base = (0,0) # for dragging
+
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            Button.check_all_hovers()
+            button_down_time = time.time()
+            dragging = True
+            drag_base = pygame.mouse.get_pos()
+        if event.type == pygame.MOUSEBUTTONUP:
+            if not dragging: 
+                Button.check_all_hovers()
+            dragging = False
+    
+    mouse_pos = pygame.mouse.get_pos()
+    
+    if dragging and time.time() - button_down_time > click_threshold: 
+        dx = mouse_pos[0] - drag_base[0]
+        dy = mouse_pos[1] - drag_base[1]
+        
+        new_offset = (SCREEN_OFFSET[0] + dx, SCREEN_OFFSET[1] + dy)
+        
+        SCREEN_OFFSET = new_offset
+        set_screen_offset(new_offset)
+
+        drag_base = mouse_pos
+    
     screen.fill(BG_COLOUR)
     Sprite.displaySprites()
-
     pygame.display.flip()
+
 pygame.quit()

@@ -3,11 +3,17 @@ BG_COLOUR = (0,0,0)
 SCREEN_WIDTH, SCREEN_HEIGHT = 414, 896
 TILE_COL = (48, 143, 44)
 SELECTION_TINT = (30,30,30)
+SCREEN_OFFSET = (0,0)
 
 # SETUP
 import pygame 
 import random
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# FUNCTIONS
+def set_screen_offset(pos): 
+    global SCREEN_OFFSET
+    SCREEN_OFFSET = pos
 
 # SPRITE CLASSES
 class Sprite:
@@ -17,6 +23,7 @@ class Sprite:
         Sprite.active_sprites.append(self)
         self.active = True
         self.rect = pygame.Rect(x, y, w, l)   
+        self.use_offset = False
     
     def set_pos(self, x, y):  self.rect.center = (x,y)
     def get_pos(self): return self.rect.center[0], self.rect.center[1]
@@ -35,7 +42,7 @@ class Sprite:
             else: x.display()
 
 class ImageSprite(Sprite):
-    def __init__(self, path, x=0, y=0, tint=None):
+    def __init__(self, path, x=0, y=0, tint=None, use_offset=False):
         super().__init__(0, 0, x, y)
         try:
             self.img = pygame.image.load(f"Assets/{path}").convert_alpha()
@@ -43,8 +50,14 @@ class ImageSprite(Sprite):
             self.img = pygame.image.load(f"Assets/placeholder.png").convert_alpha()
         if tint: self.img.fill((tint), special_flags=pygame.BLEND_ADD)
         self.rect = self.img.get_rect(center=(x,y))  
+        self.use_offset = use_offset
     def display(self):
-        screen.blit(self.img, self.rect)
+        offx, offy = 0,0
+        if self.use_offset: offx, offy = SCREEN_OFFSET[0], SCREEN_OFFSET[1]
+
+        pos_rect = pygame.Rect(0,0,self.rect.width, self.rect.height)
+        pos_rect.center = (self.rect.centerx + offx, self.rect.centery + offy)
+        screen.blit(self.img, pos_rect)
 
 class RectSprite(Sprite):
     def __init__(self, fill, w, l, x=0, y=0):
@@ -56,8 +69,8 @@ class RectSprite(Sprite):
 # BUTTONS
 class Button(ImageSprite):
     buttons = []
-    def __init__(self, path, x=0, y=0, tint=None, func = None, params = None):
-        super().__init__(path, x, y, tint)
+    def __init__(self, path, x=0, y=0, tint=None, func = None, params = None, use_offset=False):
+        super().__init__(path, x, y, tint, use_offset)
         Button.buttons.append(self)
         self.func = func
         self.params = params
@@ -70,7 +83,9 @@ class Button(ImageSprite):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         x, y = self.get_pos()
         if (mouse_x > x - self.rect.width / 2 and mouse_x < x + self.rect.width / 2) and (mouse_y > y - self.rect.height / 2 and mouse_y < y + self.rect.height / 2):
-            if self.func: self.func(self.params)
+            if self.func: 
+                if self.params: self.func(self.params)
+                else: self.func()
             return True
         return False
     
@@ -95,7 +110,7 @@ class Tile(Button):
     tiles = []
     
     def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL):
-        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, func=test, params=self)
+        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, test, self, True)
         self.relative_x = relative_x
         self.relative_y = relative_y
         if not Tile.center_tile: 
