@@ -111,7 +111,7 @@ class Button(ImageSprite):
     def check_all_hovers():
         for x in Button.buttons: x.check_hover()
 
-def test(tile): print(tile)
+def test(tile): print(f"Tile at {tile.relative_x}, {tile.relative_y} clicked at {pygame.time.get_ticks()}")
 
 # GAME OBJECTS
 class Tile(Button):
@@ -122,11 +122,19 @@ class Tile(Button):
         super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, test, self, True, priority)
         self.relative_x = relative_x
         self.relative_y = relative_y
+        self.building = None
+        self.floors = 0
         if not Tile.center_tile: 
             Tile.center_tile = self
         else:
             self.rect.center = (SCREEN_WIDTH / 2 + 50 * relative_x + 50 * relative_y, SCREEN_HEIGHT / 2 + 32 * relative_x - 32 * relative_y)
         Tile.tiles.append(self)
+
+    def set_building(self, name):
+        self.building = name
+    def add_floor(self):
+        if self.building == None: print("No building on tile to build on")
+        else: self.floors += 1
 
     @staticmethod
     def get_random_placement():

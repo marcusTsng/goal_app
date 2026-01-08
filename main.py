@@ -85,12 +85,17 @@ img = ImageSprite("placeholder.png", 300, 300, (255,0,0,100))
 button = Button("placeholder.png", 150, 150, priority=1)
 
 center_tile = Tile(color=(255,255,255))
+center_tile.set_building("Hut")
+center_tile.add_floor()
 # tile1 = Tile(0, 1)
 # tile2 = Tile(0, -1)
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
-
+def addTile():
+    x,y = Tile.get_random_placement() 
+    Tile(x,y)
+for _ in range(150): addTile()
 
 button.set_function(addTile)
 
