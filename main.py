@@ -95,7 +95,7 @@ center_tile.add_floor()
 def addTile():
     x,y = Tile.get_random_placement() 
     Tile(x,y)
-for _ in range(150): addTile()
+for _ in range(20): addTile()
 
 button.set_function(addTile)
 
