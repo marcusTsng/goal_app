@@ -65,17 +65,14 @@ class Project(Task):
         print(self.index)
         Project.projects.pop(self.index)
         addTile()
-pp = Project("PP", 10)
-print(pp)
-Project.completeP(pp)
 # test
-Task.printTasks()
-task = Task("task")
-task2 = Task("task2")
-task3= Task("task3")
-Task.printTasks()
-task2.complete()
-Task.printTasks()
+# Task.printTasks()
+# task = Task("task")
+# task2 = Task("task2")
+# task3= Task("task3")
+# Task.printTasks()
+# task2.complete()
+# Task.printTasks()
 
 ### SPRITES AND OTHER VARIABLES
 
