@@ -8,6 +8,11 @@ from pygame_objs import *
 pygame.init()
 pygame.display.set_caption("VOYAGE")
 
+def addTile():
+    x,y = Tile.get_random_placement()
+    Tile(x,y)
+for _ in range(5): addTile()
+
 class Task:
     tasks = []
     completedTasks = []
@@ -29,13 +34,40 @@ class Task:
         for t in Task.tasks: print(t.name)
 
 class Routine(Task):
+    routines = []
+    completedRoutines = []
+    lastIndexR = 0
     def __init__(self, name, frequency):
         super().__init__(name)
+        self.name = name
+        self.frequency = frequency
+        self.index = Routine.lastIndexR
+        Routine.routines.append(self)
+        Routine.lastIndexR += 1
+    def completeR(self):
+        Routine.completedRoutines.append(self)
+        Routine.routines.pop(self.index)
+
 
 class Project(Task):
+    projects = []
+    completedProjects = []
+    lastIndexP = 0
     def __init__(self, name, duration):
         super().__init__(name)
-
+        self.name = name
+        self.duration = duration
+        self.index = Project.lastIndexP
+        Project.projects.append(self)
+        Project.lastIndexP += 1
+    def completeP(self):
+        Project.completedProjects.append(self)
+        print(self.index)
+        Project.projects.pop(self.index)
+        addTile()
+pp = Project("PP", 10)
+print(pp)
+Project.completeP(pp)
 # test
 Task.printTasks()
 task = Task("task")
@@ -58,10 +90,7 @@ center_tile = Tile(color=(255,255,255))
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
-def addTile():
-    x,y = Tile.get_random_placement() 
-    Tile(x,y)
-for _ in range(5): addTile()
+
 
 button.set_function(addTile)
 
