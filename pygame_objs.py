@@ -4,6 +4,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 414, 896
 TILE_COL = (48, 143, 44)
 SELECTION_TINT = (30,30,30)
 SCREEN_OFFSET = (0,0)
+BUTTON_BASE_COLORS = (100,100,100)#(230,145,56)
 
 # SETUP
 import pygame 
@@ -111,7 +112,21 @@ class Button(ImageSprite):
     def check_all_hovers():
         for x in Button.buttons: x.check_hover()
 
-def test(tile): print(f"Tile at {tile.relative_x}, {tile.relative_y} clicked at {pygame.time.get_ticks()}")
+class PopUp:
+    def __init__(self, base : RectSprite, items : list):
+        if not items: items = []
+        items.insert(0, base)
+        self.base = base
+        self.items = items
+        self.active = False
+        self.set_active(False)
+    def set_active(self, bool): 
+        self.active = bool
+        for x in self.items: x.set_active(bool)
+    def toggle_active(self): self.set_active(not self.active)
+
+
+def TESTFUNCTION(tile): print(f"Tile at {tile.relative_x}, {tile.relative_y} clicked at {pygame.time.get_ticks()}")
 
 # GAME OBJECTS
 class Tile(Button):
@@ -119,7 +134,7 @@ class Tile(Button):
     tiles = []
     
     def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL, priority=1):
-        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, test, self, True, priority)
+        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, TESTFUNCTION, self, True, priority)
         self.relative_x = relative_x
         self.relative_y = relative_y
         self.building = None

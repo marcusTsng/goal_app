@@ -76,7 +76,6 @@ class Project(Task):
 
 ### SPRITES AND OTHER VARIABLES
 
-sprite = RectSprite((255,255,255), 100, 100, 0, 0, priority=2)
 add_button = Button("placeholder.png", 150, 150, priority=2)
 complete_button = Button("placeholder.png", 300, 150, priority=2, tint=(255,0,0))
 
@@ -92,6 +91,21 @@ def make():
     test = Project("pp", 10)
     complete_button.set_function(test.completeP)
 add_button.set_function(make)
+
+
+# FUNCTIONS
+def add_task(): pass 
+def view_tasks(): pass 
+
+
+## UI SETUP
+add = Button("Buttons/add_button.png", 30, 30, BUTTON_BASE_COLORS, add_task)
+view = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS, view_tasks)
+pop_up = PopUp(
+    RectSprite((100,100,100), 350, 200, (SCREEN_WIDTH-350)/2, 300, priority=3),
+    items=None
+)
+view.set_function(pop_up.toggle_active)
 
 ### MAIN GAME LOOP
 dragging = False
