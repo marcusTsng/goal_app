@@ -7,7 +7,7 @@ from pygame_objs import *
 
 pygame.init()
 pygame.display.set_caption("VOYAGE")
-
+print("afdhas")
 def addTile():
     x,y = Tile.get_random_placement()
     Tile(x,y)
