@@ -62,7 +62,6 @@ class Project(Task):
         Project.lastIndexP += 1
     def completeP(self):
         Project.completedProjects.append(self)
-        print(self.index)
         Project.projects.pop(self.index)
         addTile()
 # test
@@ -88,8 +87,12 @@ center_tile.add_floor()
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
-add_button.set_function(addTile)
-complete_button.set_function(addTile)
+
+def make():
+    global test
+    test = Project("pp", 10)
+add_button.set_function(make)
+complete_button.set_function(test.completeP)
 
 ### MAIN GAME LOOP
 dragging = False
