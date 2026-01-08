@@ -118,7 +118,7 @@ class Tile(Button):
     center_tile = None
     tiles = []
     
-    def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL, priority=0):
+    def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL, priority=1):
         super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, test, self, True, priority)
         self.relative_x = relative_x
         self.relative_y = relative_y

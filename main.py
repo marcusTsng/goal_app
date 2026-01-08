@@ -7,7 +7,7 @@ from pygame_objs import *
 
 pygame.init()
 pygame.display.set_caption("VOYAGE")
-print("afdhas")
+
 def addTile():
     x,y = Tile.get_random_placement()
     Tile(x,y)
@@ -79,10 +79,9 @@ Task.printTasks()
 
 ### SPRITES AND OTHER VARIABLES
 
-sprite = RectSprite((255,255,255), 100, 100, 0, 0, priority=1)
-img = ImageSprite("placeholder.png", 300, 300, (255,0,0,100))
-# button = Button((200,200,200), 100, 50, 200, 100)
-button = Button("placeholder.png", 150, 150, priority=1)
+sprite = RectSprite((255,255,255), 100, 100, 0, 0, priority=2)
+add_button = Button("placeholder.png", 150, 150, priority=2)
+complete_button = Button("placeholder.png", 300, 150, priority=2, tint=(255,0,0))
 
 center_tile = Tile(color=(255,255,255))
 center_tile.set_building("Hut")
@@ -97,7 +96,8 @@ def addTile():
     Tile(x,y)
 for _ in range(20): addTile()
 
-button.set_function(addTile)
+add_button.set_function(addTile)
+complete_button.set_function(addTile)
 
 ### MAIN GAME LOOP
 dragging = False
