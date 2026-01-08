@@ -64,6 +64,7 @@ class Project(Task):
         Project.completedProjects.append(self)
         Project.projects.pop(self.index)
         addTile()
+
 # test
 # Task.printTasks()
 # task = Task("task")
@@ -87,12 +88,10 @@ center_tile.add_floor()
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
-
 def make():
-    global test
     test = Project("pp", 10)
+    complete_button.set_function(test.completeP)
 add_button.set_function(make)
-complete_button.set_function(test.completeP)
 
 ### MAIN GAME LOOP
 dragging = False
