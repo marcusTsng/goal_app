@@ -138,6 +138,8 @@ class Tile(Button):
 
     @staticmethod
     def get_random_placement():
+        if len(Tile.tiles) == 0: return 0, 0
+
         isTaken = True
         t = None
         while isTaken:
