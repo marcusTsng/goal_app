@@ -88,11 +88,6 @@ center_tile.add_floor()
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
-def addTile():
-    x,y = Tile.get_random_placement() 
-    Tile(x,y)
-for _ in range(20): addTile()
-
 add_button.set_function(addTile)
 complete_button.set_function(addTile)
 
