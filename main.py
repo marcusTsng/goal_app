@@ -7,6 +7,10 @@ from pygame_objs import *
 
 pygame.init()
 pygame.display.set_caption("VOYAGE")
+my_font = pygame.font.SysFont('Comic Sans MS', 30)
+
+
+
 
 def addTile():
     x,y = Tile.get_random_placement()
@@ -16,15 +20,21 @@ for _ in range(5): addTile()
 def addBuilding():
     print("Pls make ts")
 
+# def taskDisplay():
+#     for i in range(len(Task.tasks)):
+#         text_surface = my_font.render("gragr", False, (255, 255, 255))
+#         screen.blit(text_surface, (207, 448))
 
 
 class Task:
     tasks = []
+    taskName = []
     completedTasks = []
     lastIndex = 0
     def __init__(self, name):
         self.name = name
         self.index = Task.lastIndex
+        Task.taskName.append(self.name)
         Task.tasks.append(self)
         Task.lastIndex+=1
 
@@ -69,6 +79,13 @@ class Project(Task):
         Project.completedProjects.append(self)
         Project.projects.pop(self.index)
         addTile()
+
+pp = Project("pp", 10)
+dih = Project("dih", 10)
+
+
+
+
 
 # test
 # Task.printTasks()
@@ -125,6 +142,7 @@ drag_base = (0,0) # for dragging
 
 running = True
 while running:
+
     mouse_pos = pygame.mouse.get_pos()
 
     for event in pygame.event.get():
@@ -153,6 +171,10 @@ while running:
     
     screen.fill(BG_COLOUR)
     Sprite.displaySprites()
+    for i in range(len(Task.taskName)):
+        text = Task.taskName[i] + 
+        text_surface = my_font.render(text, False, (255, 255, 255))
+        screen.blit(text_surface, (207, 50*(i+1)))
     pygame.display.flip()
 
 pygame.quit()
