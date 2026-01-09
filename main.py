@@ -125,12 +125,12 @@ add = Button("Buttons/add_button.png", 30, 30, BUTTON_BASE_COLORS, add_task)
 view = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS, view_tasks)
 
 pop_up = PopUp(
-    # items={
-    #     "close_button": Button("placeholder.png")
-    # }, 
-    items=None,
+    items=[
+        Button("placeholder.png", 5, 5, BUTTON_BASE_COLORS, priority=10)
+    ],
     hide_buttons=[add, view]
 )
+pop_up.items[1].set_function(pop_up.toggle_active)
 view.set_function(pop_up.toggle_active)
 add.set_function(add_task)
 

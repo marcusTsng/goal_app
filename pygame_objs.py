@@ -113,7 +113,7 @@ class Button(ImageSprite):
         for x in Button.buttons: x.check_hover()
 
 class PopUp:
-    def __init__(self, items = None, base : RectSprite = None, hide_buttons = []):
+    def __init__(self, items : dict = None, base : RectSprite = None, hide_buttons = []):
         if not items: items = []
         if not base:  base = RectSprite((100,100,100), SCREEN_HEIGHT, 200, 0, SCREEN_HEIGHT-200, priority=3)
         items.insert(0, base)
@@ -122,10 +122,17 @@ class PopUp:
         self.active = False
         self.hide_buttons = hide_buttons
         self.set_active(False)
+
+        for x in self.items:
+            
+            if x != self.base: x.rect.center = (x.rect.centerx + base.rect.x, x.rect.centery + base.rect.y)
+
     def set_active(self, bool): 
         self.active = bool
         for x in self.hide_buttons: x.set_active(not bool)
         for x in self.items: x.set_active(bool)
+    def deactivate(self): self.set_active(False)
+    def activate(self): self.set_active(True)
     def toggle_active(self): self.set_active(not self.active)
 
 
