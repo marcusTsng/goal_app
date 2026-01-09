@@ -205,7 +205,7 @@ while running:
         tile_data_tab.set_active(False)
 
         text = ""
-        display_text("MENU", title_font, (80, 100))
+        display_text("Routines", title_font, (47, 100))
         for i in range(len(Task.taskName)):
             text = f"{Task.taskName[i]}"
             display_text(
