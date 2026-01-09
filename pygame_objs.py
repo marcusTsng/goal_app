@@ -284,3 +284,13 @@ class Tile(Button):
                 if x.relative_x == ntx and x.relative_y == nty: 
                     isTaken = True
         return ntx, nty
+    
+class Structure(ImageSprite):
+    types = {
+        "hut" : ["Structures/Hut/hut_single_floor", "Structures/Hut/hut_mid_floor", "Structures/Hut/hut_top_floor"]
+    }
+
+    def __init__(self, tile : Tile, structure_type=types.hut):
+        pos=tile.get_pos()
+        super().__init__(structure_type[0], pos[0], pos[1], use_offset=True)
+        self.priority = tile.priority

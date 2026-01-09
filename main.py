@@ -136,7 +136,7 @@ menu = PopUp(
 )
 tile_data_tab = PopUp(
     base=RectSprite((30,30,30,180), SCREEN_WIDTH, 300, 0, SCREEN_HEIGHT-300),
-    items=None,
+    items=[],
     priority=8
 )
 
