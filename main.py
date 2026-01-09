@@ -13,6 +13,11 @@ def addTile():
     Tile(x,y)
 for _ in range(5): addTile()
 
+def addBuilding():
+    print("Pls make ts")
+
+
+
 class Task:
     tasks = []
     completedTasks = []
