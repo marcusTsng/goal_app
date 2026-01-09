@@ -119,7 +119,8 @@ add_button.set_function(make)
 
 
 add = Button("Buttons/add_button.png", 30, 30, BUTTON_BASE_COLORS)
-view = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS)
+view_routines = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS)
+view_projects = Button("Buttons/list_button.png", 130, 30, BUTTON_BASE_COLORS)
 
 menu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
@@ -127,26 +128,42 @@ menu = PopUp(
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
         add_button, complete_button
     ],
-    hide_buttons=[add, view],
+    hide_buttons=[add, view_routines, view_projects],
     set_tab="menu",
     priority = 9
 )
+pmenu = PopUp(
+    base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
+    items=[
+        Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="pmenu"),
+        add_button, complete_button
+    ],
+    hide_buttons=[add, view_routines, view_projects],
+    set_tab="pmenu",
+    priority = 9
+)
+
 tile_data_tab = PopUp(
     base=RectSprite((30,30,30,180), SCREEN_WIDTH, 300, 0, SCREEN_HEIGHT-300),
     items=[],
     priority=8
 )
 
-def switch_to_menu():
-    menu.set_active(True)
-    set_tab("menu")
-def hide_menu(): 
+def switch_to_menu(name):
+    if name == "menu":
+        menu.set_active(True)
+    elif name == "pmenu": 
+        pmenu.set_active(True)
+    set_tab(name)
+def hide_menus(): 
     menu.set_active(False)
+    pmenu.set_active(False)
     set_tab("main")
 
 # BUTTON SETUP
-menu.items[1].set_function(hide_menu)
-view.set_function(switch_to_menu)
+menu.items[1].set_function(hide_menus)
+view_projects.set_function(switch_to_menu, "pmenu")
+view_routines.set_function(switch_to_menu, "menu")
 add.set_function(make)
 
 ### MAIN GAME LOOP
