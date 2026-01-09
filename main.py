@@ -67,7 +67,7 @@ class Routine(Task):
 class Project(Task):
     projects = []
     completedProjects = []
-    lastIndexP = 0
+    lastIndexP = 0 # this thing it bad order bad booboo
     def __init__(self, name, duration):
         super().__init__(name)
         self.name = name
@@ -127,7 +127,7 @@ view = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS, view_tasks)
 
 pop_up = PopUp(
     items=[
-        Button("placeholder.png", 5, 5, BUTTON_BASE_COLORS, priority=10)
+        Button("placeholder.png", 50, 50, BUTTON_BASE_COLORS, priority=10)
     ],
     hide_buttons=[add, view]
 )
