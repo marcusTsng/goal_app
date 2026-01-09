@@ -9,6 +9,7 @@ pygame.init()
 pygame.display.set_caption("VOYAGE")
 title_font = pygame.font.SysFont('arialrounded', 60)
 main_font = pygame.font.SysFont('arialrounded', 30)
+description_font = pygame.font.SysFont('arialrounded', 15)
 
 # pygame.init()
 # fonts = pygame.font.get_fonts()
@@ -248,6 +249,9 @@ while running:
                 scrollable = True,
                 clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
             )
+
+            description = "fwhuwhfuwu"
+            display_text(f"Description: {description}", description_font, (80, 650))
             # text_surface = my_font.render(text, False, (255, 255, 255))
             # screen.blit(text_surface, (80, 170 + 50*(i+1)))
     elif current_tab == "pmenu":
