@@ -233,8 +233,8 @@ while running:
 
         text = ""
         display_text("Routines", title_font, (80, 110))
-        for i in range(len(Task.taskName)):
-            text = f"{Task.taskName[i]}"
+        for i in range(len(Routine.routineNames)):
+            text = f"{Routine.routineNames[i]}"
             display_text(
                 text, main_font,
                 (80, 170 + 50*(i+1)),
@@ -256,8 +256,8 @@ while running:
 
         text = ""
         display_text("Projects", title_font, (80, 110))
-        for i in range(len(Task.taskName)):
-            text = f"{Task.taskName[i]}" # LIAM
+        for i in range(len(Project.projectNames)):
+            text = f"{Project.projectNames[i]}" # LIAM
             display_text(
                 text, main_font,
                 (80, 170 + 50*(i+1)),
