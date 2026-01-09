@@ -25,7 +25,7 @@ def display_text(text, font, pos, color = (255,255,255), scrollable = False, cli
     off = 0
     text_surface = font.render(text, False, color)
     if scrollable: 
-        clamp = 50 * len(projects)
+        clamp = -50 * (len(projects) - 1)
         if scroll_offset > 0: scroll_offset = 0
         elif scroll_offset <= clamp: scroll_offset = clamp
         off = scroll_offset
