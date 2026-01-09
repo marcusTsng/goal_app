@@ -127,12 +127,17 @@ view = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS)
 menu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
-        Button("placeholder.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
+        Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
         add_button, complete_button
     ],
     hide_buttons=[add, view],
     set_tab="menu",
     priority = 9
+)
+tile_data_tab = PopUp(
+    base=RectSprite((30,30,30,180), SCREEN_WIDTH, 300, 0, SCREEN_HEIGHT-300),
+    items=None,
+    priority=8
 )
 
 def switch_to_menu():
@@ -191,6 +196,9 @@ while running:
     screen.fill(BG_COLOUR)
     Sprite.displaySprites()
     if current_tab == "menu":
+        Tile.deselect_tiles()
+        tile_data_tab.set_active(False)
+
         text = ""
         display_text("MENU", title_font, (80, 100))
         for i in range(len(Task.taskName)):
@@ -204,6 +212,14 @@ while running:
         )
             # text_surface = my_font.render(text, False, (255, 255, 255))
             # screen.blit(text_surface, (80, 170 + 50*(i+1)))
+    
+    if Tile.selected != None:
+        tile_data_tab.set_active(True)
+        display_text("Empty tile", main_font, (30, SCREEN_HEIGHT-250))
+    else:
+        tile_data_tab.set_active(False)
+    
+
     pygame.display.flip()
 
 pygame.quit()

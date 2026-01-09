@@ -2,9 +2,9 @@
 BG_COLOUR = (0,0,0)
 SCREEN_WIDTH, SCREEN_HEIGHT = 414, 896
 TILE_COL = (48, 143, 44)
-SELECTION_TINT = (30,30,30)
 SCREEN_OFFSET = (0,0)
 BUTTON_BASE_COLORS = (100,100,100)#(230,145,56)
+PANEL_BG_COLOR = (30,30,30,180)
 
 TAB = "main" # tab can be main, menu, add
 
@@ -75,7 +75,7 @@ class Sprite:
     def set_active(self, active=True): 
         self.active = active
         if active: Sprite.active_sprites.append(self)
-        else: Sprite.active_sprites.remove(self)
+        elif self in Sprite.active_sprites: Sprite.active_sprites.remove(self)
 
     @staticmethod
     def displaySprites():
@@ -181,11 +181,12 @@ class Button(ImageSprite):
 
     @staticmethod
     def check_all_hovers():
+        is_Tile = False
         for x in Button.buttons:
-            x.check_hover()
-
+            if x.check_hover() and isinstance(x, Tile): is_Tile = True
+        if not is_Tile: Tile.deselect_tiles()
 class PopUp:
-    def __init__(self, items : dict = None, base : RectSprite = None, hide_buttons = [], set_tab = "main", priority = 1):
+    def __init__(self, items : dict = None, base : RectSprite = None, hide_buttons = [], set_tab = None, priority = 1):
         if not items: items = []
         # if not base:  base = RectSprite((100,100,100), SCREEN_HEIGHT, 200, 0, SCREEN_HEIGHT-200, priority=3)
         items.insert(0, base)
@@ -208,20 +209,19 @@ class PopUp:
         for x in self.items: x.set_active(bool)
 
         if bool and self.set_tab: set_tab(self.set_tab)
-        elif not bool: set_tab("main")
+        elif not bool and self.set_tab: set_tab("main")
     def toggle_active(self): self.set_active(not self.active)
-
-
-
-def TESTFUNCTION(tile): print(f"Tile at {tile.relative_x}, {tile.relative_y} clicked at {pygame.time.get_ticks()}")
 
 # GAME OBJECTS
 class Tile(Button):
     center_tile = None
     tiles = []
+    selector = ImageSprite("Terrain/tile_selection.png", 0, 0, (255,255,255), priority=2, use_offset=True)
+    selector.set_active(False)
+    selected = None
     
     def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL, priority=1):
-        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, TESTFUNCTION, self, True, priority)
+        super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, Tile.select_tile, self, True, priority)
         self.relative_x = relative_x
         self.relative_y = relative_y
         self.building = None
@@ -237,6 +237,16 @@ class Tile(Button):
     def add_floor(self):
         if self.building == None: print("No building on tile to build on")
         else: self.floors += 1
+
+    @staticmethod
+    def select_tile(tile): 
+        Tile.selector.rect.center = tile.rect.center
+        Tile.selector.set_active(True)
+        Tile.selected = tile
+    @staticmethod
+    def deselect_tiles(): 
+        Tile.selector.set_active(False)
+        Tile.selected = None
 
     @staticmethod
     def get_random_placement():
