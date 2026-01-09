@@ -83,7 +83,7 @@ class Project(Task):
         addTile()
 
 pp = Project("pp", 10)
-dih = Project("dih", 10)
+dih = Project("pp", 10)
 
 
 
@@ -207,14 +207,20 @@ while running:
         text = ""
         display_text("MENU", title_font, (80, 100))
         for i in range(len(Task.taskName)):
-            text += f"{Task.taskName[i]}\n"
-            
-        display_text(
-            text, main_font, 
-            (80,220), #(80, 170 + 50*(i+1)), 
-            scrollable = True, 
-            clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+            text = f"{Task.taskName[i]}"
+            display_text(
+                text, main_font,
+                (80, 170 + 50*(i+1)),
+                scrollable = True,
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
         )
+            text = ""
+            display_text(
+                text, main_font,
+                (80, 170 + 50 * (i + 1)),
+                scrollable=True,
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+            )
             # text_surface = my_font.render(text, False, (255, 255, 255))
             # screen.blit(text_surface, (80, 170 + 50*(i+1)))
     
