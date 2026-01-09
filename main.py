@@ -101,11 +101,16 @@ def view_tasks(): pass
 ## UI SETUP
 add = Button("Buttons/add_button.png", 30, 30, BUTTON_BASE_COLORS, add_task)
 view = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS, view_tasks)
+
 pop_up = PopUp(
-    RectSprite((100,100,100), 350, 200, (SCREEN_WIDTH-350)/2, 300, priority=3),
-    items=None
+    # items={
+    #     "close_button": Button("placeholder.png")
+    # }, 
+    items=None,
+    hide_buttons=[add, view]
 )
 view.set_function(pop_up.toggle_active)
+add.set_function(add_task)
 
 ### MAIN GAME LOOP
 dragging = False
