@@ -16,14 +16,18 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # FUNCTIONS
 scroll_offset = 0
 scroll_sensitivity = 1
+projects = []
+def update_projects(proj):
+    global projects 
+    projects = proj
 def display_text(text, font, pos, color = (255,255,255), scrollable = False, clip_rect = None):
     global scroll_offset
     off = 0
     text_surface = font.render(text, False, color)
     if scrollable: 
-        # clamp = 50-text_surface.get_height()
+        clamp = 50 * len(projects)
         if scroll_offset > 0: scroll_offset = 0
-        # elif scroll_offset <= clamp: scroll_offset = clamp
+        elif scroll_offset <= clamp: scroll_offset = clamp
         off = scroll_offset
     draw_y = pos[1] + off
 

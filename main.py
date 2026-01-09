@@ -232,5 +232,6 @@ while running:
     
 
     pygame.display.flip()
+    update_projects(Project.projects)
 
 pygame.quit()
