@@ -170,6 +170,7 @@ def hide_menus():
 
 # BUTTON SETUP
 menu.items[1].set_function(hide_menus)
+pmenu.items[1].set_function(hide_menus)
 view_projects.set_function(switch_to_menu, "pmenu")
 view_routines.set_function(switch_to_menu, "menu")
 add.set_function(make)
@@ -245,7 +246,28 @@ while running:
             )
             # text_surface = my_font.render(text, False, (255, 255, 255))
             # screen.blit(text_surface, (80, 170 + 50*(i+1)))
-    
+    elif current_tab == "pmenu":
+        Tile.deselect_tiles()
+        tile_data_tab.set_active(False)
+
+        text = ""
+        display_text("Projects", title_font, (80, 110))
+        for i in range(len(Task.taskName)):
+            text = f"{Task.taskName[i]}" # LIAM
+            display_text(
+                text, main_font,
+                (80, 170 + 50*(i+1)),
+                scrollable = True,
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+            )
+            text = ""
+            display_text(
+                text, main_font,
+                (80, 170 + 50 * (i + 1)),
+                scrollable = True,
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+            )
+
     if Tile.selected != None:
         tile_data_tab.set_active(True)
         display_text("Empty tile", main_font, (30, SCREEN_HEIGHT-250))
