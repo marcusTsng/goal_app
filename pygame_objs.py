@@ -52,6 +52,22 @@ def set_tab(tab):
     global TAB
     TAB = tab
 
+
+def draw_gradient(surface, start_color, end_color):
+    """Draws a vertical linear gradient on the surface."""
+    # Convert colors to pygame.Color objects for easier manipulation
+    c1 = pygame.Color(start_color)
+    c2 = pygame.Color(end_color)
+    
+    # Calculate color step per pixel height
+    height = surface.get_height()
+    for y in range(height):
+        # Linear interpolation of color based on the y position
+        # lerp() blends two colors by a factor (0.0 to 1.0)
+        color = c1.lerp(c2, y / height)
+        # Draw a 1-pixel-high rectangle across the entire width
+        pygame.draw.rect(surface, color, (0, y, surface.get_width(), 1))
+
 # SPRITE CLASSES
 class Sprite:
     active_sprites = []

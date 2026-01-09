@@ -160,6 +160,10 @@ drag_base = (0,0) # for dragging
 
 running = True
 tab = get_tab()
+
+background_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+draw_gradient(background_surface, (0,23,45), (0,0,0))
+
 while running:
     mouse_pos = pygame.mouse.get_pos()
     current_tab = get_tab()
@@ -193,7 +197,8 @@ while running:
 
         drag_base = mouse_pos
     
-    screen.fill(BG_COLOUR)
+    screen.blit(background_surface, (0, 0))
+    # screen.fill(BG_COLOUR)
     Sprite.displaySprites()
     if current_tab == "menu":
         Tile.deselect_tiles()
