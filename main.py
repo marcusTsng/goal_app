@@ -7,11 +7,8 @@ from pygame_objs import *
 
 pygame.init()
 pygame.display.set_caption("VOYAGE")
-title_font = pygame.font.SysFont('Comic Sans MS', 60)
-main_font = pygame.font.SysFont('Comic Sans MS', 30)
-
-
-
+title_font = pygame.font.SysFont('arialrounded', 60)
+main_font = pygame.font.SysFont('arialrounded', 30)
 
 def addTile():
     x,y = Tile.get_random_placement()
@@ -205,7 +202,7 @@ while running:
         tile_data_tab.set_active(False)
 
         text = ""
-        display_text("Routines", title_font, (90, 110))
+        display_text("Routines", title_font, (80, 110))
         for i in range(len(Task.taskName)):
             text = f"{Task.taskName[i]}"
             display_text(
