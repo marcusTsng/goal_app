@@ -213,7 +213,7 @@ while running:
                 (80, 170 + 50*(i+1)),
                 scrollable = True,
                 clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
-        )
+            )
             text = ""
             display_text(
                 text, main_font,
