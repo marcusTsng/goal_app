@@ -116,7 +116,7 @@ add_button = Button("placeholder.png", 100, 750, priority=2)
 complete_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 
 def make():
-    test = Project("pp", 10)
+    test = Project("pp", 10)#Make user input stuff
     complete_button.set_function(test.completeP)
 add_button.set_function(make)
 
@@ -218,7 +218,7 @@ while running:
             display_text(
                 text, main_font,
                 (80, 170 + 50 * (i + 1)),
-                scrollable=True,
+                scrollable = True,
                 clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
             )
             # text_surface = my_font.render(text, False, (255, 255, 255))
