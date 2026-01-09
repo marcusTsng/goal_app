@@ -7,7 +7,7 @@ from pygame_objs import *
 
 pygame.init()
 pygame.display.set_caption("VOYAGE")
-title_font = pygame.font.SysFont('Comic Sans MS', 80) 
+title_font = pygame.font.SysFont('Comic Sans MS', 60)
 main_font = pygame.font.SysFont('Comic Sans MS', 30)
 
 
@@ -205,7 +205,7 @@ while running:
         tile_data_tab.set_active(False)
 
         text = ""
-        display_text("Routines", title_font, (47, 100))
+        display_text("Routines", title_font, (90, 110))
         for i in range(len(Task.taskName)):
             text = f"{Task.taskName[i]}"
             display_text(
