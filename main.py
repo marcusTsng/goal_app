@@ -56,6 +56,7 @@ class Task:
 
 class Routine(Task):
     routines = []
+    routineNames = []
     completedRoutines = []
     lastIndexR = 0
     def __init__(self, name, frequency):
@@ -63,6 +64,7 @@ class Routine(Task):
         self.name = name
         self.frequency = frequency
         self.index = Routine.lastIndexR
+        Routine.routineNames.append(self.name)
         Routine.routines.append(self)
         Routine.lastIndexR += 1
     def completeR(self):
@@ -72,6 +74,7 @@ class Routine(Task):
 
 class Project(Task):
     projects = []
+    projectNames = []
     completedProjects = []
     lastIndexP = 0 # this thing it bad order bad booboo
     def __init__(self, name, duration):
@@ -79,6 +82,7 @@ class Project(Task):
         self.name = name
         self.duration = duration
         self.index = Project.lastIndexP
+        Project.projectNames.append(self.name)
         Project.projects.append(self)
         Project.lastIndexP += 1
     def completeP(self):
