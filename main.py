@@ -157,6 +157,7 @@ running = True
 tab = get_tab()
 while running:
     mouse_pos = pygame.mouse.get_pos()
+    current_tab = get_tab()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -169,26 +170,38 @@ while running:
             if time.time() - button_down_time < click_threshold: 
                 Button.check_all_hovers()
             dragging = False
-    
+        
+        if event.type == pygame.MOUSEWHEEL and current_tab == "menu":
+            menu_scroll(event.y * 10)
+
     
     if dragging and time.time() - button_down_time > click_threshold: 
         dx = mouse_pos[0] - drag_base[0]
         dy = mouse_pos[1] - drag_base[1]
         
-        new_offset = (SCREEN_OFFSET[0] + dx, SCREEN_OFFSET[1] + dy)
-        
-        SCREEN_OFFSET = new_offset
-        set_screen_offset(new_offset)
+        if current_tab == "main":
+            new_offset = (SCREEN_OFFSET[0] + dx, SCREEN_OFFSET[1] + dy)
+            SCREEN_OFFSET = new_offset
+            set_screen_offset(new_offset)
+        elif current_tab == "menu":
+            menu_scroll(dy)
 
         drag_base = mouse_pos
     
     screen.fill(BG_COLOUR)
     Sprite.displaySprites()
-    if get_tab() == "menu":
+    if current_tab == "menu":
+        text = ""
+        display_text("MENU", title_font, (80, 100))
         for i in range(len(Task.taskName)):
-            text = Task.taskName[i]
-            display_text("MENU", title_font, (80, 100))
-            display_text(text, main_font, (80, 170 + 50*(i+1)))
+            text += f"{Task.taskName[i]}\n"
+            
+        display_text(
+            text, main_font, 
+            (80,220), #(80, 170 + 50*(i+1)), 
+            scrollable = True, 
+            clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+        )
             # text_surface = my_font.render(text, False, (255, 255, 255))
             # screen.blit(text_surface, (80, 170 + 50*(i+1)))
     pygame.display.flip()

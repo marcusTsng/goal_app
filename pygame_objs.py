@@ -14,9 +14,34 @@ import random
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # FUNCTIONS
-def display_text(text, font, pos, color = (255,255,255)):
+scroll_offset = 0
+scroll_sensitivity = 1
+def display_text(text, font, pos, color = (255,255,255), scrollable = False, clip_rect = None):
+    global scroll_offset
+    off = 0
     text_surface = font.render(text, False, color)
-    screen.blit(text_surface, pos)
+    if scrollable: 
+        clamp = 50-text_surface.get_height()
+        if scroll_offset > 0: scroll_offset = 0
+        elif scroll_offset <= clamp: scroll_offset = clamp
+        off = scroll_offset
+    draw_y = pos[1] + off
+
+    if clip_rect:
+        old_clip = screen.get_clip()
+        if isinstance(clip_rect, pygame.Rect):
+            screen.set_clip(clip_rect)
+        else:
+            screen.set_clip(pygame.Rect(clip_rect))
+        screen.blit(text_surface, (pos[0], draw_y))
+        screen.set_clip(old_clip)
+    else:
+        screen.blit(text_surface, (pos[0], draw_y))
+
+    # screen.blit(text_surface, (pos[0], pos[1] + off))
+def menu_scroll(dy): 
+    global scroll_offset
+    scroll_offset += scroll_sensitivity * dy
 
 def set_screen_offset(pos): 
     global SCREEN_OFFSET
@@ -96,39 +121,68 @@ class RectSprite(Sprite):
 # BUTTONS
 class Button(ImageSprite):
     buttons = []
-    def __init__(self, path, x=0, y=0, tint=None, func = None, params = None, use_offset=False, priority=0, tab="main"):
+    
+    def __init__(self, path, x=0, y=0, tint=None, func=None, params=None, use_offset=False, priority=0, tab="main"):
         super().__init__(path, x, y, tint, use_offset, priority)
         Button.buttons.append(self)
         self.func = func
         self.params = params
         self.tab = tab
+        
+        # Create mask once for pixel-perfect collision (uses alpha channel)
+        self.mask = pygame.mask.from_surface(self.img)
+
     def set_function(self, func, params=None): 
         self.func = func
         self.params = params
+
     def check_hover(self):
-        if not self.active or get_tab() != self.tab: return False
+        if not self.active or get_tab() != self.tab:
+            return False
         
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        x, y = self.get_pos()
-        if (mouse_x > x - self.rect.width / 2 and mouse_x < x + self.rect.width / 2) and (mouse_y > y - self.rect.height / 2 and mouse_y < y + self.rect.height / 2):
-            if self.func: 
-                if self.params: self.func(self.params)
-                else: self.func()
+        
+        # Get button's top-left position on screen (accounting for offset)
+        offx, offy = (SCREEN_OFFSET[0], SCREEN_OFFSET[1]) if self.use_offset else (0, 0)
+        button_x = self.rect.centerx + offx - self.img.get_width() // 2
+        button_y = self.rect.centery + offy - self.img.get_height() // 2
+        
+        # Relative mouse position within the button image
+        rel_x = mouse_x - button_x
+        rel_y = mouse_y - button_y
+        
+        # Quick bounds check
+        if rel_x < 0 or rel_y < 0 or rel_x >= self.img.get_width() or rel_y >= self.img.get_height():
+            return False
+        
+        # Pixel-perfect check
+        if self.mask.get_at((int(rel_x), int(rel_y))):
+            if self.func:
+                if self.params is not None:
+                    self.func(self.params)
+                else:
+                    self.func()
             return True
+        
         return False
     
     def set_active(self, active=True):
         self.active = active
         if active: 
-            Sprite.active_sprites.append(self)
-            Button.buttons.append(self)
+            if self not in Sprite.active_sprites:
+                Sprite.active_sprites.append(self)
+            if self not in Button.buttons:
+                Button.buttons.append(self)
         else: 
-            Sprite.active_sprites.remove(self)
-            Button.buttons.remove(self)
+            if self in Sprite.active_sprites:
+                Sprite.active_sprites.remove(self)
+            if self in Button.buttons:
+                Button.buttons.remove(self)
 
     @staticmethod
     def check_all_hovers():
-        for x in Button.buttons: x.check_hover()
+        for x in Button.buttons:
+            x.check_hover()
 
 class PopUp:
     def __init__(self, items : dict = None, base : RectSprite = None, hide_buttons = [], set_tab = "main", priority = 1):
