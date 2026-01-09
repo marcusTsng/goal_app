@@ -77,6 +77,7 @@ class Project(Task):
         Project.lastIndexP += 1
     def completeP(self):
         Project.completedProjects.append(self)
+        print(self.index)
         Project.projects.pop(self.index)
         addTile()
 
