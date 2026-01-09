@@ -10,6 +10,14 @@ pygame.display.set_caption("VOYAGE")
 title_font = pygame.font.SysFont('arialrounded', 60)
 main_font = pygame.font.SysFont('arialrounded', 30)
 
+# pygame.init()
+# fonts = pygame.font.get_fonts()
+# print(f"Total fonts available on this system: {len(fonts)}\n")
+# print("List of available fonts:")
+# for f in fonts:
+#     print(f"* {f}")
+
+
 def addTile():
     x,y = Tile.get_random_placement()
     Tile(x,y)
