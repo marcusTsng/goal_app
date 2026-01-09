@@ -172,7 +172,7 @@ while running:
     screen.fill(BG_COLOUR)
     Sprite.displaySprites()
     for i in range(len(Task.taskName)):
-        text = Task.taskName[i] + 
+        text = Task.taskName[i]
         text_surface = my_font.render(text, False, (255, 255, 255))
         screen.blit(text_surface, (207, 50*(i+1)))
     pygame.display.flip()
