@@ -1,4 +1,4 @@
-# CONSTANTS
+# CONSTANTS/STATICS
 BG_COLOUR = (0,0,0)
 SCREEN_WIDTH, SCREEN_HEIGHT = 414, 896
 TILE_COL = (48, 143, 44)
@@ -6,15 +6,26 @@ SELECTION_TINT = (30,30,30)
 SCREEN_OFFSET = (0,0)
 BUTTON_BASE_COLORS = (100,100,100)#(230,145,56)
 
+TAB = "main" # tab can be main, menu, add
+
 # SETUP
 import pygame 
 import random
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # FUNCTIONS
+def display_text(text, font, pos, color = (255,255,255)):
+    text_surface = font.render(text, False, color)
+    screen.blit(text_surface, pos)
+
 def set_screen_offset(pos): 
     global SCREEN_OFFSET
     SCREEN_OFFSET = pos
+
+def get_tab(): return TAB
+def set_tab(tab): 
+    global TAB
+    TAB = tab
 
 # SPRITE CLASSES
 class Sprite:
@@ -73,22 +84,29 @@ class RectSprite(Sprite):
     def __init__(self, fill, w, l, x=0, y=0, priority=0):
         super().__init__(w, l, x, y, priority)
         self.fill = fill
+        self.surface = pygame.Surface((w, l), pygame.SRCALPHA)
+        if len(fill) == 3: 
+            r,g,b = fill
+            fill = (r,g,b, 255)
+        self.surface.fill(fill)
     def display(self):
-        pygame.draw.rect(screen, self.fill, self.rect)
+        screen.blit(self.surface, (self.rect.x, self.rect.y))
+        # pygame.draw.rect(self.surface, self.fill, self.rect)
 
 # BUTTONS
 class Button(ImageSprite):
     buttons = []
-    def __init__(self, path, x=0, y=0, tint=None, func = None, params = None, use_offset=False, priority=0):
+    def __init__(self, path, x=0, y=0, tint=None, func = None, params = None, use_offset=False, priority=0, tab="main"):
         super().__init__(path, x, y, tint, use_offset, priority)
         Button.buttons.append(self)
         self.func = func
         self.params = params
+        self.tab = tab
     def set_function(self, func, params=None): 
         self.func = func
         self.params = params
     def check_hover(self):
-        if not self.active: return False
+        if not self.active or get_tab() != self.tab: return False
         
         mouse_x, mouse_y = pygame.mouse.get_pos()
         x, y = self.get_pos()
@@ -113,27 +131,32 @@ class Button(ImageSprite):
         for x in Button.buttons: x.check_hover()
 
 class PopUp:
-    def __init__(self, items : dict = None, base : RectSprite = None, hide_buttons = []):
+    def __init__(self, items : dict = None, base : RectSprite = None, hide_buttons = [], set_tab = "main", priority = 1):
         if not items: items = []
-        if not base:  base = RectSprite((100,100,100), SCREEN_HEIGHT, 200, 0, SCREEN_HEIGHT-200, priority=3)
+        # if not base:  base = RectSprite((100,100,100), SCREEN_HEIGHT, 200, 0, SCREEN_HEIGHT-200, priority=3)
         items.insert(0, base)
         self.base = base
         self.items = items
         self.active = False
         self.hide_buttons = hide_buttons
+        self.set_tab = set_tab
+        self.base.priority = priority
         self.set_active(False)
 
         for x in self.items:
-            
             if x != self.base: x.rect.center = (x.rect.centerx + base.rect.x, x.rect.centery + base.rect.y)
+            x.tab = set_tab
+            x.priority = priority + 1
 
     def set_active(self, bool): 
         self.active = bool
         for x in self.hide_buttons: x.set_active(not bool)
         for x in self.items: x.set_active(bool)
-    def deactivate(self): self.set_active(False)
-    def activate(self): self.set_active(True)
+
+        if bool and self.set_tab: set_tab(self.set_tab)
+        elif not bool: set_tab("main")
     def toggle_active(self): self.set_active(not self.active)
+
 
 
 def TESTFUNCTION(tile): print(f"Tile at {tile.relative_x}, {tile.relative_y} clicked at {pygame.time.get_ticks()}")

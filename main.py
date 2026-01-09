@@ -7,7 +7,8 @@ from pygame_objs import *
 
 pygame.init()
 pygame.display.set_caption("VOYAGE")
-my_font = pygame.font.SysFont('Comic Sans MS', 30)
+title_font = pygame.font.SysFont('Comic Sans MS', 80) 
+main_font = pygame.font.SysFont('Comic Sans MS', 30)
 
 
 
@@ -99,9 +100,6 @@ dih = Project("dih", 10)
 
 ### SPRITES AND OTHER VARIABLES
 
-add_button = Button("placeholder.png", 150, 150, priority=2)
-complete_button = Button("placeholder.png", 300, 150, priority=2, tint=(255,0,0))
-
 center_tile = Tile(color=(255,255,255))
 center_tile.set_building("Hut")
 center_tile.add_floor()
@@ -110,30 +108,44 @@ center_tile.add_floor()
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
+
+
+## UI SETUP
+
+add_button = Button("placeholder.png", 100, 750, priority=2)
+complete_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
+
 def make():
     test = Project("pp", 10)
     complete_button.set_function(test.completeP)
 add_button.set_function(make)
 
 
-# FUNCTIONS
-def add_task(): pass 
-def view_tasks(): pass 
+add = Button("Buttons/add_button.png", 30, 30, BUTTON_BASE_COLORS)
+view = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS)
 
-
-## UI SETUP
-add = Button("Buttons/add_button.png", 30, 30, BUTTON_BASE_COLORS, add_task)
-view = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS, view_tasks)
-
-pop_up = PopUp(
+menu = PopUp(
+    base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
-        Button("placeholder.png", 50, 50, BUTTON_BASE_COLORS, priority=10)
+        Button("placeholder.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
+        add_button, complete_button
     ],
-    hide_buttons=[add, view]
+    hide_buttons=[add, view],
+    set_tab="menu",
+    priority = 9
 )
-pop_up.items[1].set_function(pop_up.toggle_active)
-view.set_function(pop_up.toggle_active)
-add.set_function(add_task)
+
+def switch_to_menu():
+    menu.set_active(True)
+    set_tab("menu")
+def hide_menu(): 
+    menu.set_active(False)
+    set_tab("main")
+
+# BUTTON SETUP
+menu.items[1].set_function(hide_menu)
+view.set_function(switch_to_menu)
+add.set_function(make)
 
 ### MAIN GAME LOOP
 dragging = False
@@ -142,8 +154,8 @@ click_threshold = 0.2
 drag_base = (0,0) # for dragging
 
 running = True
+tab = get_tab()
 while running:
-
     mouse_pos = pygame.mouse.get_pos()
 
     for event in pygame.event.get():
@@ -172,10 +184,13 @@ while running:
     
     screen.fill(BG_COLOUR)
     Sprite.displaySprites()
-    for i in range(len(Task.taskName)):
-        text = Task.taskName[i]
-        text_surface = my_font.render(text, False, (255, 255, 255))
-        screen.blit(text_surface, (207, 50*(i+1)))
+    if get_tab() == "menu":
+        for i in range(len(Task.taskName)):
+            text = Task.taskName[i]
+            display_text("MENU", title_font, (80, 100))
+            display_text(text, main_font, (80, 170 + 50*(i+1)))
+            # text_surface = my_font.render(text, False, (255, 255, 255))
+            # screen.blit(text_surface, (80, 170 + 50*(i+1)))
     pygame.display.flip()
 
 pygame.quit()
