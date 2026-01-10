@@ -131,14 +131,14 @@ def make(type=None):
     if type == "Project": 
         task = Project("New Project", 0, "Enter a description here", "Sport") 
         select_from_index(len(Project.projects) - 1, task.name)
+
+
+    elif type == "Routine": 
+        task = Routine("New Routine", 1, "Enter a description here", "Sport")
+        select_from_index(len(Routine.routines) - 1, task.name)
         timings = open("Routine timings", "a")
         timings.write(str(time.time()) + "\n")
         timings.close()
-
-    elif type == "Routine": 
-        task = Routine("New Routine", 0, "Enter a description here", "Sport")
-        select_from_index(len(Routine.routines) - 1, task.name)
-
 
 
 
@@ -412,7 +412,7 @@ while running:
     time_list = check_time.readlines()
     for i in range(len(time_list)):
         time_list[i] = float(time_list[i])
-        if time_list[i] == time_list[i] + 86400 * Routine.frequencies[i]:
+        if time.time() <= time_list[i] + 1 * Routine.frequencies[i] and time.time() >= time_list[i] + 2 * Routine.frequencies[i]:
             print("MAKE MENU FOR ALERT") #MARCUS
     if current_tab == "main":
         for x in info_text_boxes: x.set_active(False)
