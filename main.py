@@ -176,7 +176,7 @@ amenu = PopUp(
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="amenu"),
         
     ],
-    hide_buttons=[add, view_routines, view_projects],
+    hide_buttons=[view_routines, view_projects],
     set_tab="amenu",
     priority = 9
 )
@@ -238,11 +238,7 @@ pmenu.items[1].set_function(hide_menus)
 amenu.items[1].set_function(hide_menus)
 view_projects.set_function(switch_to_menu, "pmenu")
 view_routines.set_function(switch_to_menu, "menu")
-<<<<<<< Updated upstream
-add.set_function(switch_to_menu, "amenu")
-=======
-# add.set_function(make)
->>>>>>> Stashed changes
+# add.set_function(switch_to_menu, "amenu")
 
 ### MAIN GAME LOOP
 dragging = False
@@ -339,7 +335,6 @@ while running:
                 (80, 170 + 50 * (i + 1)),
                 scrollable = True,
                 clip_rect=menu_clip_rect, selectable=True
-<<<<<<< Updated upstream
             )
 
         task : Project = height_to_task(get_selected_task_height(), Project.projects)
@@ -366,8 +361,6 @@ while running:
                 (80, 170 + 50 * (i + 1)),
                 scrollable = True,
                 clip_rect=menu_clip_rect, selectable=True
-=======
->>>>>>> Stashed changes
             )
 
         task : Project = height_to_task(get_selected_task_height(), Project.projects)
