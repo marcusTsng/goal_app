@@ -414,9 +414,9 @@ while running:
         print(time_list[i] + 5)
         print(Routine.frequencies[i])
         if time.time() >= time_list[i] + 5:
-            print("fhsdf")
-        # if time.time() >= time_list[i] + 5 * Routine.frequencies[i] and time.time() <= time_list[i] + 10 * Routine.frequencies[i]:
-        #     print("MAKE MENU FOR ALERT") #MARCUS
+            print("MAKE MENU FOR ALERT") #MARCUS
+
+            time_list[i] = time.time() #this line should be run after the user clicks completed routine or didnt complete routine
     if current_tab == "main":
         for x in info_text_boxes: x.set_active(False)
 
