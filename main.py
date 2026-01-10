@@ -2,9 +2,7 @@ import pygame
 import random
 import math
 import time
-
 from pygame_objs import *
-
 pygame.init()
 pygame.display.set_caption("VOYAGE")
 title_font = pygame.font.SysFont('arialrounded', 60)
@@ -63,12 +61,14 @@ class Routine(Task):
     routines = []
     routineNames = []
     completedRoutines = []
+    frequencies = []
     lastIndexR = 0
     def __init__(self, name, frequency, description, type):
         super().__init__(name, description, type)
         self.name = name
         self.frequency = frequency
         self.index = Routine.lastIndexR
+        Routine.frequencies.append(self.frequency)
         Routine.routineNames.append(self.name)
         Routine.routines.append(self)
         Routine.lastIndexR += 1
@@ -131,10 +131,15 @@ def make(type=None):
     if type == "Project": 
         task = Project("New Project", 0, "Enter a description here", "Sport") 
         select_from_index(len(Project.projects) - 1, task.name)
+        timings = open("Routine timings", "w")
+        timings.write(str(time.time()))
+        timings.write("\n")
+        timings.close()
 
     elif type == "Routine": 
         task = Routine("New Routine", 0, "Enter a description here", "Sport")
         select_from_index(len(Routine.routines) - 1, task.name)
+
 
 
 
@@ -372,7 +377,13 @@ while running:
         display_text("Empty tile", main_font, (30, SCREEN_HEIGHT-250))
     else:
         tile_data_tab.set_active(False)
-    
+    check_time = open("Routine timings", "r")
+    time_list = check_time.readlines()
+    for i in range(len(time_list)):
+        time_list[i] = float(time_list[i])
+        if time_list[i] == time_list[i] + 86400 * Routine.frequencies[i]:
+            print("MAKE MENU FOR ALERT") #MARCUS
+
 
     pygame.display.flip()
 
