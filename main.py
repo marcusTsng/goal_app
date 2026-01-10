@@ -75,6 +75,11 @@ class Routine(Task):
     def completeR(self):
         Routine.completedRoutines.append(self)
         Routine.routines.pop(self.index)
+    @staticmethod
+    def update_names():
+        Project.projectNames = []
+        for x in Project.projects: 
+            Project.projectNames.append(x.name)
 
 
 class Project(Task):
@@ -95,6 +100,11 @@ class Project(Task):
         print(self.index)
         Project.projects.pop(self.index)
         addTile()
+    @staticmethod
+    def update_names():
+        Project.projectNames = []
+        for x in Project.projects: 
+            Project.projectNames.append(x.name)
 
 pp = Project("pp1", 10, "ahfuwuwf", "Work")
 dih = Routine("pp2", 10, "fwhifwi", "School")
@@ -147,9 +157,6 @@ add_project_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip
 complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 add_routine_button = Button("placeholder.png", 100, 750, priority=2)
 complete_routine_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
-
-name_text_box = Textbox(80,650,300,30, font= description_font, default_text="Title")
-info_text_boxes=[name_text_box]
 
 name_text_box = Textbox(80,650,300,30, font= description_font, default_text="Title")
 info_text_boxes=[name_text_box]
@@ -213,9 +220,10 @@ def hide_menus():
     pmenu.set_active(False)
     amenu.set_active(False)
     set_tab("main")
-last_task = None
+
 last_task = None
 def show_info_for_task(task =None):
+    global last_task
     if not task: 
         display_text("No task selected", description_font, (80, 650))
         for x in info_text_boxes: x.set_active(False)
@@ -233,19 +241,13 @@ def show_info_for_task(task =None):
 
     
     tab = get_tab()
-    if not name_text_box.active:
+    if task != last_task:
+        last_task = task
         name_text_box.text = name
     for x in info_text_boxes: x.set_active()
-    # display_text(name, description_font, (80, 650))
-    # display_text(f"Type: {type}", description_font, (80, 680))
-    # if tab == "pmenu":
-    #     display_text(f"Duration: {t}", description_font, (80, 710))
-    # else:
-    #     display_text(f"Frequency: {t}", description_font, (80, 710))
-    # display_text(f"Description: {description}", description_font, (80, 740))
-    if not name_text_box.active:
-        name_text_box.text = name
-    for x in info_text_boxes: x.set_active()
+
+    task.name = name_text_box.text
+
     # display_text(name, description_font, (80, 650))
     # display_text(f"Type: {type}", description_font, (80, 680))
     # if tab == "pmenu":
@@ -294,14 +296,11 @@ while running:
             if time.time() - button_down_time < click_threshold: 
                 Button.check_all_hovers()
                 Textbox.check_click(mouse_pos)
-                Textbox.check_click(mouse_pos)
             dragging = False
         
         if event.type == pygame.MOUSEWHEEL and (current_tab == "menu" or current_tab == "pmenu"):
             menu_scroll(event.y * 10)
 
-        for tb in Textbox.textboxes:
-            if tb.active: tb.handle_event(event)
         for tb in Textbox.textboxes:
             if tb.active: tb.handle_event(event)
     
@@ -321,8 +320,6 @@ while running:
     screen.blit(background_surface, (0, 0))
     # screen.fill(BG_COLOUR)
     Sprite.displaySprites()
-    Textbox.update_all()
-
     Textbox.update_all()
 
     if current_tab == "menu":
@@ -418,5 +415,7 @@ while running:
         for x in info_text_boxes: x.set_active(False)
 
     pygame.display.flip()
+    Project.update_names()
+    Routine.update_names()
 
 pygame.quit()
