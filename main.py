@@ -168,6 +168,16 @@ pmenu = PopUp(
     set_tab="pmenu",
     priority = 9
 )
+amenu = PopUp(
+    base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
+    items=[
+        Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="amenu"),
+        add_project_button, complete_project_button
+    ],
+    hide_buttons=[add, view_routines, view_projects],
+    set_tab="amenu",
+    priority = 9
+)
 
 tile_data_tab = PopUp(
     base=RectSprite((30,30,30,180), SCREEN_WIDTH, 300, 0, SCREEN_HEIGHT-300),
@@ -182,10 +192,14 @@ def switch_to_menu(name):
     elif name == "pmenu": 
         pmenu.set_active(True)
         deselect_task_in_menu()
+    elif name == "amenu":
+        amenu.set_active(True)
+        deselect_task_in_menu()
     set_tab(name)
 def hide_menus(): 
     menu.set_active(False)
     pmenu.set_active(False)
+    amenu.set_active(False)
     set_tab("main")
 def show_info_for_task(task =None):
     if not task: 
@@ -208,7 +222,7 @@ def show_info_for_task(task =None):
     display_text(f"Type: {type}", description_font, (80, 680))
     if tab == "pmenu":
         display_text(f"Duration: {t}", description_font, (80, 710))
-    else: 
+    else:
         display_text(f"Frequency: {t}", description_font, (80, 710))
     display_text(f"Description: {description}", description_font, (80, 740))
 def height_to_task(height, array):
@@ -219,9 +233,10 @@ def height_to_task(height, array):
 # BUTTON SETUP
 menu.items[1].set_function(hide_menus)
 pmenu.items[1].set_function(hide_menus)
+amenu.items[1].set_function(hide_menus)
 view_projects.set_function(switch_to_menu, "pmenu")
 view_routines.set_function(switch_to_menu, "menu")
-add.set_function(make)
+add.set_function(switch_to_menu, "amenu")
 
 ### MAIN GAME LOOP
 dragging = False
@@ -320,7 +335,30 @@ while running:
 
         task : Project = height_to_task(get_selected_task_height(), Project.projects)
         show_info_for_task(task)
+    elif current_tab == "amenu":
+        Tile.deselect_tiles()
+        tile_data_tab.set_active(False)
 
+        text = ""
+        display_text("Add task", title_font, (80, 110))
+        for i in range(len(Task.taskName)):
+            text = f"{Task.taskName[i]}"
+            display_text(
+                text, main_font,
+                (80, 170 + 50*(i+1)),
+                scrollable = True,
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
+            )
+            text = ""
+            display_text(
+                text, main_font,
+                (80, 170 + 50 * (i + 1)),
+                scrollable = True,
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
+            )
+
+        task : Project = height_to_task(get_selected_task_height(), Project.projects)
+        show_info_for_task(task)
     if Tile.selected != None:
         tile_data_tab.set_active(True)
         display_text("Empty tile", main_font, (30, SCREEN_HEIGHT-250))
