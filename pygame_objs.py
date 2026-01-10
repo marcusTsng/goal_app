@@ -235,7 +235,7 @@ class Textbox:
     def set_use(self, in_use=True):
         # Deactivate previous active textbox
         if in_use and Textbox.active_textbox and Textbox.active_textbox != self:
-            Textbox.active_textbox.active = False
+            Textbox.active_textbox.in_use = False
         
         self.in_use = in_use
         if in_use:

@@ -159,7 +159,9 @@ add_routine_button = Button("placeholder.png", 100, 750, priority=2)
 complete_routine_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 
 name_text_box = Textbox(80,650,300,30, font= description_font, default_text="Title")
-info_text_boxes=[name_text_box]
+description_text_box = Textbox(80,680,300,30, font= description_font, default_text="Description")
+time_text_box = Textbox(80,710,300,30, font= description_font, default_text="Frequency/Duration in days")
+info_text_boxes=[name_text_box, description_text_box, time_text_box]
 
 add_project_button.set_function(make, params="Project")
 add_routine_button.set_function(make, params="Routine")
@@ -171,7 +173,7 @@ menu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
-        add_routine_button, complete_routine_button, name_text_box
+        add_routine_button, complete_routine_button, name_text_box, description_text_box
     ],
     hide_buttons=[view_routines, view_projects],
     set_tab="menu",
@@ -181,7 +183,7 @@ pmenu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="pmenu"),
-        add_project_button, complete_project_button, name_text_box
+        add_project_button, complete_project_button, name_text_box, description_text_box
     ],
     hide_buttons=[view_routines, view_projects],
     set_tab="pmenu",
@@ -233,20 +235,23 @@ def show_info_for_task(task =None):
 
     name = task.name
     description = task.description
-    type = task.type
-    if isinstance(task, Routine):  # if the task is a routine
-        t = task.frequency
-    else: # if the task is a project
-        t = task.duration
 
-    
-    tab = get_tab()
     if task != last_task:
         last_task = task
         name_text_box.text = name
+        description_text_box.text = description
+        if isinstance(task, Routine):
+            time_text_box.text = str(task.frequency)
+        else: 
+            time_text_box.text = str(task.duration)
     for x in info_text_boxes: x.set_active()
 
     task.name = name_text_box.text
+    task.description = description_text_box.text
+    if isinstance(task, Routine):
+        task.frequency = time_text_box.text
+    else: 
+        task.duration = time_text_box.text
 
     # display_text(name, description_font, (80, 650))
     # display_text(f"Type: {type}", description_font, (80, 680))
@@ -409,10 +414,10 @@ while running:
     time_list = check_time.readlines()
     for i in range(len(time_list)):
         time_list[i] = float(time_list[i])
-        print(time.time())
-        print(time_list[i] + 5 * Routine.frequencies[i])
-        print(time_list[i] + 5)
-        print(Routine.frequencies[i])
+        # print(time.time())
+        # print(time_list[i] + 5 * Routine.frequencies[i])
+        # print(time_list[i] + 5)
+        # print(Routine.frequencies[i])
         if time.time() >= time_list[i] + 5:
             print("MAKE MENU FOR ALERT") #MARCUS
 
