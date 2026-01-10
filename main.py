@@ -131,9 +131,8 @@ def make(type=None):
     if type == "Project": 
         task = Project("New Project", 0, "Enter a description here", "Sport") 
         select_from_index(len(Project.projects) - 1, task.name)
-        timings = open("Routine timings", "w")
-        timings.write(str(time.time()))
-        timings.write("\n")
+        timings = open("Routine timings", "a")
+        timings.write(str(time.time()) + "\n")
         timings.close()
 
     elif type == "Routine": 
