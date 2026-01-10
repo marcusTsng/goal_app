@@ -174,7 +174,7 @@ amenu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="amenu"),
-        add_project_button, complete_project_button
+        
     ],
     hide_buttons=[add, view_routines, view_projects],
     set_tab="amenu",
