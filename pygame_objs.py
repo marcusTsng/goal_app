@@ -180,23 +180,137 @@ class RectSprite(Sprite):
         # pygame.draw.rect(self.surface, self.fill, self.rect)
 
 # TEXTBOX
+# class Textbox:
+#     textboxes = []
+    
+#     def __init__(self, x, y, w, h, default_text = "Empty", text_color=(255,255,255), blank_text_color=(100,100,100), bg_color=None):
+#         self.active = False
+#         self.text = default_text
+#         self.default_text = default_text
+#         self.empty = True
+#         self.rect = pygame.Rect(x, y, w, h)
+#         self.bg_color = bg_color
+#         self.color = text_color
+#         self.blank_color = blank_text_color
+#         Textbox.textboxes.append(self)
+
+#     def set_active(self, bool): self.active = bool
+
+#     def display(self):
+#         if self.bg_color != None:
+#             pygame.draw.rect(screen, self.bg_color, self.rect)
+#         if self.text == "": self.empty = True
+#         if self.empty: 
+#             self.text = self.default_text
+
+#     @staticmethod
+#     def display_all():
+#         for x in Textbox.textboxes:
+#             if not x.active: x.display()
 class Textbox:
-    def __init__(self, x, y, w, h, default_text = "Empty", text_color=(255,255,255), blank_text_color=(100,100,100), bg_color=None):
-        self.text = default_text
-        self.default_text = default_text
-        self.empty = True
+    textboxes = []
+    active_textbox = None  # only one textbox active at a time (like most UIs)
+
+    def __init__(self, x, y, w, h, default_text="Enter text...", 
+                 text_color=(255,255,255), 
+                 blank_text_color=(100,100,100), 
+                 bg_color=None, 
+                 font=None):
         self.rect = pygame.Rect(x, y, w, h)
-        self.bg_color = bg_color
+        self.text = ""
+        self.default_text = default_text
         self.color = text_color
         self.blank_color = blank_text_color
-    
-    def display(self):
-        if self.bg_color != None:
-            pygame.draw.rect(screen, self.bg_color, self.rect)
-        if self.text == "": self.empty = True
-        if self.empty: 
-            self.text = self.default_text
+        self.bg_color = bg_color
+        self.active = False
+        self.in_use = False
+        self.font = font if font else pygame.font.Font(None, 32)  # default font
+
+        Textbox.textboxes.append(self)
+
+    def set_active(self, active=True):
+        self.active = active
+
+
+    def set_use(self, in_use=True):
+        # Deactivate previous active textbox
+        if in_use and Textbox.active_textbox and Textbox.active_textbox != self:
+            Textbox.active_textbox.active = False
         
+        self.in_use = in_use
+        if in_use:
+            Textbox.active_textbox = self
+        elif Textbox.active_textbox == self:
+            Textbox.active_textbox = None
+
+    def handle_event(self, event):
+        """Call this in your main event loop when the textbox is active"""
+        if not self.in_use:
+            return False
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            elif event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE:
+                self.set_use(False)  # exit editing
+            elif event.unicode.isprintable():  # only printable characters
+                self.text += event.unicode
+            return True
+        return False
+
+    def display(self):
+        if not self.active: return
+
+        # Background
+        if self.bg_color is not None:
+            pygame.draw.rect(screen, self.bg_color, self.rect)
+            # Optional: border when active
+            if self.in_use:
+                pygame.draw.rect(screen, (100, 180, 255), self.rect, 2, border_radius=4)
+
+        # Text content
+        display_text = self.text if self.text else self.default_text
+        color = self.color if self.text else self.blank_color
+
+        text_surf = self.font.render(display_text, True, color)
+        
+        # Center vertically, pad left a bit
+        text_x = self.rect.x + 8
+        text_y = self.rect.centery - text_surf.get_height() // 2
+        
+        # Simple clipping so text doesn't go outside box
+        old_clip = screen.get_clip()
+        screen.set_clip(self.rect)
+        screen.blit(text_surf, (text_x, text_y))
+        screen.set_clip(old_clip)
+
+        # Optional: blinking cursor when active
+        if self.in_use and (pygame.time.get_ticks() // 500) % 2 == 0:
+            cursor_x = text_x + text_surf.get_width() + 2
+            if cursor_x < self.rect.x + self.rect.width:
+                pygame.draw.line(screen, self.color, 
+                            (cursor_x, text_y), 
+                            (cursor_x, text_y + text_surf.get_height()), 2)
+
+    @staticmethod
+    def update_all():
+        """Call this once per frame instead of display_all"""
+        for tb  in Textbox.textboxes:
+            tb.display()
+            
+
+    @staticmethod
+    def check_click(pos):
+        """Call this when mouse is clicked (in event loop)"""
+        for tb in Textbox.textboxes:
+            if tb.rect.collidepoint(pos):
+                tb.set_use(True)
+                return True
+        # Clicked outside → deactivate current
+        if Textbox.active_textbox:
+            Textbox.active_textbox.set_use(False)
+        return False
+            
 
 
 # BUTTONS

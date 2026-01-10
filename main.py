@@ -149,6 +149,9 @@ complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(
 add_routine_button = Button("placeholder.png", 100, 750, priority=2)
 complete_routine_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 
+name_text_box = Textbox(80,650,300,30, font= description_font, default_text="Title")
+info_text_boxes=[name_text_box]
+
 add_project_button.set_function(make, params="Project")
 add_routine_button.set_function(make, params="Routine")
 
@@ -159,7 +162,7 @@ menu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
-        add_routine_button, complete_routine_button
+        add_routine_button, complete_routine_button, name_text_box
     ],
     hide_buttons=[view_routines, view_projects],
     set_tab="menu",
@@ -169,7 +172,7 @@ pmenu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="pmenu"),
-        add_project_button, complete_project_button
+        add_project_button, complete_project_button, name_text_box
     ],
     hide_buttons=[view_routines, view_projects],
     set_tab="pmenu",
@@ -208,9 +211,11 @@ def hide_menus():
     pmenu.set_active(False)
     amenu.set_active(False)
     set_tab("main")
+last_task = None
 def show_info_for_task(task =None):
     if not task: 
         display_text("No task selected", description_font, (80, 650))
+        for x in info_text_boxes: x.set_active(False)
         return
 
 
@@ -224,14 +229,16 @@ def show_info_for_task(task =None):
 
     
     tab = get_tab()
-
-    display_text(name, description_font, (80, 650))
-    display_text(f"Type: {type}", description_font, (80, 680))
-    if tab == "pmenu":
-        display_text(f"Duration: {t}", description_font, (80, 710))
-    else:
-        display_text(f"Frequency: {t}", description_font, (80, 710))
-    display_text(f"Description: {description}", description_font, (80, 740))
+    if not name_text_box.active:
+        name_text_box.text = name
+    for x in info_text_boxes: x.set_active()
+    # display_text(name, description_font, (80, 650))
+    # display_text(f"Type: {type}", description_font, (80, 680))
+    # if tab == "pmenu":
+    #     display_text(f"Duration: {t}", description_font, (80, 710))
+    # else:
+    #     display_text(f"Frequency: {t}", description_font, (80, 710))
+    # display_text(f"Description: {description}", description_font, (80, 740))
 def height_to_task(height, array):
     if len(array) == 0 or height == None: return None
     i = int((height-220)/50)
@@ -272,11 +279,14 @@ while running:
         if event.type == pygame.MOUSEBUTTONUP:
             if time.time() - button_down_time < click_threshold: 
                 Button.check_all_hovers()
+                Textbox.check_click(mouse_pos)
             dragging = False
         
         if event.type == pygame.MOUSEWHEEL and (current_tab == "menu" or current_tab == "pmenu"):
             menu_scroll(event.y * 10)
 
+        for tb in Textbox.textboxes:
+            if tb.active: tb.handle_event(event)
     
     if dragging and time.time() - button_down_time > click_threshold: 
         dx = mouse_pos[0] - drag_base[0]
@@ -294,6 +304,8 @@ while running:
     screen.blit(background_surface, (0, 0))
     # screen.fill(BG_COLOUR)
     Sprite.displaySprites()
+    Textbox.update_all()
+
     if current_tab == "menu":
         update_projects(Routine.routines)
         Tile.deselect_tiles()
@@ -383,7 +395,8 @@ while running:
         time_list[i] = float(time_list[i])
         if time_list[i] == time_list[i] + 86400 * Routine.frequencies[i]:
             print("MAKE MENU FOR ALERT") #MARCUS
-
+    if current_tab == "main":
+        for x in info_text_boxes: x.set_active(False)
 
     pygame.display.flip()
 
