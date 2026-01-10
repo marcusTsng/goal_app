@@ -25,7 +25,7 @@ def addTile():
 for _ in range(5): addTile()
 
 def addBuilding():
-    print("Pls make ts")
+    print("Pls make ts") # MARCUS
 
 # def taskDisplay():
 #     for i in range(len(Task.tasks)):
@@ -38,8 +38,10 @@ class Task:
     taskName = []
     completedTasks = []
     lastIndex = 0
-    def __init__(self, name):
+    def __init__(self, name, description, type):
         self.name = name
+        self.description = description
+        self.type = type
         self.index = Task.lastIndex
         Task.taskName.append(self.name)
         Task.tasks.append(self)
@@ -60,8 +62,8 @@ class Routine(Task):
     routineNames = []
     completedRoutines = []
     lastIndexR = 0
-    def __init__(self, name, frequency):
-        super().__init__(name)
+    def __init__(self, name, frequency, description, type):
+        super().__init__(name, description, type)
         self.name = name
         self.frequency = frequency
         self.index = Routine.lastIndexR
@@ -78,8 +80,8 @@ class Project(Task):
     projectNames = []
     completedProjects = []
     lastIndexP = 0 # this thing it bad order bad booboo
-    def __init__(self, name, duration):
-        super().__init__(name)
+    def __init__(self, name, duration, description, type):
+        super().__init__(name, description, type)
         self.name = name
         self.duration = duration
         self.index = Project.lastIndexP
@@ -92,8 +94,8 @@ class Project(Task):
         Project.projects.pop(self.index)
         addTile()
 
-pp = Project("pp", 10)
-dih = Project("pp", 10)
+pp = Project("pp1", 10, "ahfuwuwf", "Work")
+dih = Project("pp2", 10, "fwhifwi", "School")
 
 
 
@@ -120,15 +122,26 @@ center_tile.add_floor()
 
 
 
+def make(type=None):
+    #Make user input stuff (MARCUS)
+
+    task = None
+    if type == "Project": 
+        task = Project("project", 5, "description", "Sport") 
+
+    elif type == "Routine": 
+        task = Routine("routine", 5, "description", "Sport")
+
+
+
 ## UI SETUP
+add_project_button = Button("placeholder.png", 100, 750, priority=2)
+complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
+add_routine_button = Button("placeholder.png", 100, 750, priority=2)
+complete_routine_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 
-add_button = Button("placeholder.png", 100, 750, priority=2)
-complete_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
-
-def make():
-    test = Project("pp", 10)#Make user input stuff
-    complete_button.set_function(test.completeP)
-add_button.set_function(make)
+add_project_button.set_function(make, params="Project")
+add_routine_button.set_function(make, params="Routine")
 
 
 add = Button("Buttons/add_button.png", 30, 30, BUTTON_BASE_COLORS)
@@ -139,7 +152,7 @@ menu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
-        add_button, complete_button
+        add_routine_button, complete_routine_button
     ],
     hide_buttons=[add, view_routines, view_projects],
     set_tab="menu",
@@ -149,7 +162,7 @@ pmenu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="pmenu"),
-        add_button, complete_button
+        add_project_button, complete_project_button
     ],
     hide_buttons=[add, view_routines, view_projects],
     set_tab="pmenu",
@@ -165,13 +178,43 @@ tile_data_tab = PopUp(
 def switch_to_menu(name):
     if name == "menu":
         menu.set_active(True)
+        deselect_task_in_menu()
     elif name == "pmenu": 
         pmenu.set_active(True)
+        deselect_task_in_menu()
     set_tab(name)
 def hide_menus(): 
     menu.set_active(False)
     pmenu.set_active(False)
     set_tab("main")
+def show_info_for_task(task =None):
+    if not task: 
+        display_text("No task selected", description_font, (80, 650))
+        return
+
+
+    name = task.name
+    description = task.description
+    type = task.type
+    if isinstance(task, Routine):  # if the task is a routine
+        t = task.frequency
+    else: # if the task is a project
+        t = task.duration
+
+    
+    tab = get_tab()
+
+    display_text(name, description_font, (80, 650))
+    display_text(f"Type: {type}", description_font, (80, 680))
+    if tab == "pmenu":
+        display_text(f"Duration: {t}", description_font, (80, 710))
+    else: 
+        display_text(f"Frequency: {t}", description_font, (80, 710))
+    display_text(f"Description: {description}", description_font, (80, 740))
+def height_to_task(height, array):
+    if len(array) == 0 or height == None: return None
+    i = int((height-220)/50)
+    return array[i]
 
 # BUTTON SETUP
 menu.items[1].set_function(hide_menus)
@@ -183,7 +226,7 @@ add.set_function(make)
 ### MAIN GAME LOOP
 dragging = False
 button_down_time = 0
-click_threshold = 0.2
+click_threshold = 0.3
 drag_base = (0,0) # for dragging
 
 running = True
@@ -192,6 +235,7 @@ tab = get_tab()
 background_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 draw_gradient(background_surface, (0,23,45), (0,0,0))
 
+task_selected = None
 while running:
     mouse_pos = pygame.mouse.get_pos()
     current_tab = get_tab()
@@ -240,20 +284,18 @@ while running:
                 text, main_font,
                 (80, 170 + 50*(i+1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
             )
             text = ""
             display_text(
                 text, main_font,
                 (80, 170 + 50 * (i + 1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
             )
 
-            description = "fwhuwhfuwu"
-            display_text(f"Description: {description}", description_font, (80, 650))
-            # text_surface = my_font.render(text, False, (255, 255, 255))
-            # screen.blit(text_surface, (80, 170 + 50*(i+1)))
+        task : Routine = height_to_task(get_selected_task_height(), Routine.routines)
+        show_info_for_task(task)
     elif current_tab == "pmenu":
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
@@ -261,20 +303,23 @@ while running:
         text = ""
         display_text("Projects", title_font, (80, 110))
         for i in range(len(Project.projectNames)):
-            text = f"{Project.projectNames[i]}" # LIAM
+            text = f"{Project.projectNames[i]}" 
             display_text(
                 text, main_font,
                 (80, 170 + 50*(i+1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
             )
             text = ""
             display_text(
                 text, main_font,
                 (80, 170 + 50 * (i + 1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
             )
+
+        task : Project = height_to_task(get_selected_task_height(), Project.projects)
+        show_info_for_task(task)
 
     if Tile.selected != None:
         tile_data_tab.set_active(True)

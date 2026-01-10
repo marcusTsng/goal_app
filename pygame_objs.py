@@ -5,12 +5,12 @@ TILE_COL = (48, 143, 44)
 SCREEN_OFFSET = (0,0)
 BUTTON_BASE_COLORS = (100,100,100)#(230,145,56)
 PANEL_BG_COLOR = (30,30,30,180)
+SELECTION_TINT = (180,180,180)
 
 TAB = "main" # tab can be main, menu, add
 
 # SETUP
-import pygame 
-import random
+import pygame, random, time
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # FUNCTIONS
@@ -20,10 +20,13 @@ projects = []
 def update_projects(proj):
     global projects 
     projects = proj
-def display_text(text, font, pos, color = (255,255,255), scrollable = False, clip_rect = None):
-    global scroll_offset
+task_selected_in_menu = None
+selector_height = None
+def display_text(text, font, pos, color = (255,255,255), scrollable = False, clip_rect = None, selectable = False):
+    global scroll_offset, task_selected_in_menu, selector_height
+
+    # scrolling
     off = 0
-    text_surface = font.render(text, False, color)
     if scrollable: 
         clamp = -50 * (len(projects) - 1)
         if scroll_offset > 0: scroll_offset = 0
@@ -31,6 +34,23 @@ def display_text(text, font, pos, color = (255,255,255), scrollable = False, cli
         off = scroll_offset
     draw_y = pos[1] + off
 
+    # Rendering
+    if selector_height == pos[1] and task_selected_in_menu:
+        text_surface = font.render(text, True, SELECTION_TINT)
+    else:
+        text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect(topleft=(pos[0], draw_y))
+
+    # Handle selection when selectable = True
+    if selectable:
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()[0]  # left mouse button
+
+        if mouse_pressed and text_rect.collidepoint(mouse_pos):
+            task_selected_in_menu = text
+            selector_height = pos[1]
+
+    # clip text for scrolling
     if clip_rect:
         old_clip = screen.get_clip()
         if isinstance(clip_rect, pygame.Rect):
@@ -42,7 +62,15 @@ def display_text(text, font, pos, color = (255,255,255), scrollable = False, cli
     else:
         screen.blit(text_surface, (pos[0], draw_y))
 
-    # screen.blit(text_surface, (pos[0], pos[1] + off))
+def get_selected_task_name(): return task_selected_in_menu
+def get_selected_task_height(): 
+    if task_selected_in_menu: return selector_height
+    else: return None
+
+def deselect_task_in_menu(): 
+    global task_selected_in_menu
+    task_selected_in_menu = None
+
 def menu_scroll(dy): 
     global scroll_offset
     scroll_offset += scroll_sensitivity * dy
@@ -185,7 +213,7 @@ class Button(ImageSprite):
             return True
         
         return False
-    
+
     def set_active(self, active=True):
         self.active = active
         if active: 
