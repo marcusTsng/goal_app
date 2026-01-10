@@ -107,7 +107,7 @@ class Project(Task):
             Project.projectNames.append(x.name)
 
 pp = Project("pp1", 10, "ahfuwuwf", "Work")
-dih = Routine("pp2", 10, "fwhifwi", "School")
+# dih = Routine("pp2", 10, "fwhifwi", "School")
 
 
 
@@ -409,8 +409,14 @@ while running:
     time_list = check_time.readlines()
     for i in range(len(time_list)):
         time_list[i] = float(time_list[i])
-        if time.time() <= time_list[i] + 1 * Routine.frequencies[i] and time.time() >= time_list[i] + 2 * Routine.frequencies[i]:
-            print("MAKE MENU FOR ALERT") #MARCUS
+        print(time.time())
+        print(time_list[i] + 5 * Routine.frequencies[i])
+        print(time_list[i] + 5)
+        print(Routine.frequencies[i])
+        if time.time() >= time_list[i] + 5:
+            print("fhsdf")
+        # if time.time() >= time_list[i] + 5 * Routine.frequencies[i] and time.time() <= time_list[i] + 10 * Routine.frequencies[i]:
+        #     print("MAKE MENU FOR ALERT") #MARCUS
     if current_tab == "main":
         for x in info_text_boxes: x.set_active(False)
 
