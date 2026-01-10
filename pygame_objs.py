@@ -17,11 +17,17 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 scroll_offset = 0
 scroll_sensitivity = 1
 projects = []
+task_selected_in_menu = None
+selector_height = None
 def update_projects(proj):
     global projects 
     projects = proj
-task_selected_in_menu = None
-selector_height = None
+def get_scroll_offset():
+    return scroll_offset
+def select_from_index(i, text):
+    global task_selected_in_menu, selector_height
+    task_selected_in_menu = text
+    selector_height = i * 50 + 220
 def display_text(text, font, pos, color = (255,255,255), scrollable = False, clip_rect = None, selectable = False):
     global scroll_offset, task_selected_in_menu, selector_height
 
@@ -105,12 +111,13 @@ class Sprite:
     active_sprites = []
     max_priority = 0
 
-    def __init__(self, w, l, x=0, y=0, priority = 0):
+    def __init__(self, w, l, x=0, y=0, priority = 0, clip_rect= None):
         Sprite.active_sprites.append(self)
         if priority > Sprite.max_priority: Sprite.max_priority = priority
         if priority < 0: priority = 0
 
         self.active = True
+        self.clip_rect = clip_rect
         self.rect = pygame.Rect(x, y, w, l)   
         self.use_offset = False
         self.priority = priority
@@ -136,8 +143,8 @@ class Sprite:
 
 
 class ImageSprite(Sprite):
-    def __init__(self, path, x=0, y=0, tint=None, use_offset=False, priority=0):
-        super().__init__(0, 0, x, y, priority)
+    def __init__(self, path, x=0, y=0, tint=None, use_offset=False, priority=0, clip_rect=None):
+        super().__init__(0, 0, x, y, priority, clip_rect)
         try:
             self.img = pygame.image.load(f"Assets/{path}").convert_alpha()
         except pygame.error as e: 
@@ -149,13 +156,19 @@ class ImageSprite(Sprite):
         offx, offy = 0,0
         if self.use_offset: offx, offy = SCREEN_OFFSET[0], SCREEN_OFFSET[1]
 
+        old_clip = screen.get_clip()
+        if self.clip_rect:
+            screen.set_clip(self.clip_rect)
+
         pos_rect = pygame.Rect(0,0,self.rect.width, self.rect.height)
         pos_rect.center = (self.rect.centerx + offx, self.rect.centery + offy)
         screen.blit(self.img, pos_rect)
 
+        screen.set_clip(old_clip)
+
 class RectSprite(Sprite):
-    def __init__(self, fill, w, l, x=0, y=0, priority=0):
-        super().__init__(w, l, x, y, priority)
+    def __init__(self, fill, w, l, x=0, y=0, priority=0, clip_rect=None):
+        super().__init__(w, l, x, y, priority, clip_rect)
         self.fill = fill
         self.surface = pygame.Surface((w, l), pygame.SRCALPHA)
         if len(fill) == 3: 
@@ -166,12 +179,32 @@ class RectSprite(Sprite):
         screen.blit(self.surface, (self.rect.x, self.rect.y))
         # pygame.draw.rect(self.surface, self.fill, self.rect)
 
+# TEXTBOX
+class Textbox:
+    def __init__(self, x, y, w, h, default_text = "Empty", text_color=(255,255,255), blank_text_color=(100,100,100), bg_color=None):
+        self.text = default_text
+        self.default_text = default_text
+        self.empty = True
+        self.rect = pygame.Rect(x, y, w, h)
+        self.bg_color = bg_color
+        self.color = text_color
+        self.blank_color = blank_text_color
+    
+    def display(self):
+        if self.bg_color != None:
+            pygame.draw.rect(screen, self.bg_color, self.rect)
+        if self.text == "": self.empty = True
+        if self.empty: 
+            self.text = self.default_text
+        
+
+
 # BUTTONS
 class Button(ImageSprite):
     buttons = []
     
-    def __init__(self, path, x=0, y=0, tint=None, func=None, params=None, use_offset=False, priority=0, tab="main"):
-        super().__init__(path, x, y, tint, use_offset, priority)
+    def __init__(self, path, x=0, y=0, tint=None, func=None, params=None, use_offset=False, priority=0, tab="main", clip_rect=None):
+        super().__init__(path, x, y, tint, use_offset, priority, clip_rect)
         Button.buttons.append(self)
         self.func = func
         self.params = params

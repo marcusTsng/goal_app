@@ -11,6 +11,8 @@ title_font = pygame.font.SysFont('arialrounded', 60)
 main_font = pygame.font.SysFont('arialrounded', 30)
 description_font = pygame.font.SysFont('arialrounded', 15)
 
+menu_clip_rect = pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
+
 # pygame.init()
 # fonts = pygame.font.get_fonts()
 # print(f"Total fonts available on this system: {len(fonts)}\n")
@@ -95,7 +97,7 @@ class Project(Task):
         addTile()
 
 pp = Project("pp1", 10, "ahfuwuwf", "Work")
-dih = Project("pp2", 10, "fwhifwi", "School")
+dih = Routine("pp2", 10, "fwhifwi", "School")
 
 
 
@@ -127,15 +129,17 @@ def make(type=None):
 
     task = None
     if type == "Project": 
-        task = Project("project", 5, "description", "Sport") 
+        task = Project("New Project", 0, "Enter a description here", "Sport") 
+        select_from_index(len(Project.projects) - 1, task.name)
 
     elif type == "Routine": 
-        task = Routine("routine", 5, "description", "Sport")
+        task = Routine("New Routine", 0, "Enter a description here", "Sport")
+        select_from_index(len(Routine.routines) - 1, task.name)
 
 
 
 ## UI SETUP
-add_project_button = Button("placeholder.png", 100, 750, priority=2)
+add_project_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 add_routine_button = Button("placeholder.png", 100, 750, priority=2)
 complete_routine_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
@@ -143,10 +147,8 @@ complete_routine_button = Button("placeholder.png", 250, 750, priority=2, tint=(
 add_project_button.set_function(make, params="Project")
 add_routine_button.set_function(make, params="Routine")
 
-
-add = Button("Buttons/add_button.png", 30, 30, BUTTON_BASE_COLORS)
-view_routines = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS)
-view_projects = Button("Buttons/list_button.png", 130, 30, BUTTON_BASE_COLORS)
+view_routines = Button("Buttons/list_button.png", 30, 30, BUTTON_BASE_COLORS)
+view_projects = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS)
 
 menu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
@@ -154,7 +156,7 @@ menu = PopUp(
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
         add_routine_button, complete_routine_button
     ],
-    hide_buttons=[add, view_routines, view_projects],
+    hide_buttons=[view_routines, view_projects],
     set_tab="menu",
     priority = 9
 )
@@ -164,7 +166,7 @@ pmenu = PopUp(
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="pmenu"),
         add_project_button, complete_project_button
     ],
-    hide_buttons=[add, view_routines, view_projects],
+    hide_buttons=[view_routines, view_projects],
     set_tab="pmenu",
     priority = 9
 )
@@ -236,7 +238,11 @@ pmenu.items[1].set_function(hide_menus)
 amenu.items[1].set_function(hide_menus)
 view_projects.set_function(switch_to_menu, "pmenu")
 view_routines.set_function(switch_to_menu, "menu")
+<<<<<<< Updated upstream
 add.set_function(switch_to_menu, "amenu")
+=======
+# add.set_function(make)
+>>>>>>> Stashed changes
 
 ### MAIN GAME LOOP
 dragging = False
@@ -267,7 +273,7 @@ while running:
                 Button.check_all_hovers()
             dragging = False
         
-        if event.type == pygame.MOUSEWHEEL and current_tab == "menu":
+        if event.type == pygame.MOUSEWHEEL and (current_tab == "menu" or current_tab == "pmenu"):
             menu_scroll(event.y * 10)
 
     
@@ -288,6 +294,7 @@ while running:
     # screen.fill(BG_COLOUR)
     Sprite.displaySprites()
     if current_tab == "menu":
+        update_projects(Routine.routines)
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
 
@@ -299,19 +306,20 @@ while running:
                 text, main_font,
                 (80, 170 + 50*(i+1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
+                clip_rect=menu_clip_rect, selectable=True
             )
             text = ""
             display_text(
                 text, main_font,
                 (80, 170 + 50 * (i + 1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
+                clip_rect=menu_clip_rect, selectable=True
             )
 
         task : Routine = height_to_task(get_selected_task_height(), Routine.routines)
         show_info_for_task(task)
     elif current_tab == "pmenu":
+        update_projects(Project.projects)
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
 
@@ -323,17 +331,20 @@ while running:
                 text, main_font,
                 (80, 170 + 50*(i+1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
+                clip_rect=menu_clip_rect, selectable=True
             )
             text = ""
             display_text(
                 text, main_font,
                 (80, 170 + 50 * (i + 1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
+                clip_rect=menu_clip_rect, selectable=True
+<<<<<<< Updated upstream
             )
 
         task : Project = height_to_task(get_selected_task_height(), Project.projects)
+        x, y = add_project_button.get_pos()
+        add_project_button.set_pos(x, len(Project.projectNames) * 50 + 240 + get_scroll_offset())
         show_info_for_task(task)
     elif current_tab == "amenu":
         Tile.deselect_tiles()
@@ -347,17 +358,21 @@ while running:
                 text, main_font,
                 (80, 170 + 50*(i+1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
+                clip_rect=menu_clip_rect, selectable=True
             )
             text = ""
             display_text(
                 text, main_font,
                 (80, 170 + 50 * (i + 1)),
                 scrollable = True,
-                clip_rect=pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400), selectable=True
+                clip_rect=menu_clip_rect, selectable=True
+=======
+>>>>>>> Stashed changes
             )
 
         task : Project = height_to_task(get_selected_task_height(), Project.projects)
+        x, y = add_project_button.get_pos()
+        add_project_button.set_pos(x, len(Project.projectNames) * 50 + 240 + get_scroll_offset())
         show_info_for_task(task)
     if Tile.selected != None:
         tile_data_tab.set_active(True)
@@ -367,6 +382,5 @@ while running:
     
 
     pygame.display.flip()
-    update_projects(Project.projects)
 
 pygame.quit()
