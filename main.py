@@ -33,14 +33,15 @@ def getPoints():
     try:
         with open("points.txt", "r") as f:
             data = f.read().strip()
-            if data == "":
+            print(data)
+            if data == "" or data == "None":
                 points = 0
             else:
                 points = int(data)
     except Exception as e:
         print("Error saving points to database:", e)
 
-points = getPoints()
+getPoints()
 
 def addTile():
     x,y = Tile.get_random_placement()
