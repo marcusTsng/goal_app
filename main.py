@@ -49,10 +49,16 @@ def addTile():
     x,y = Tile.get_random_placement()
     Tile(x,y)
 
+def addBuilding():
+    print("Pls make ts") # MARCUS
+
 # def taskDisplay():
 #     for i in range(len(Task.tasks)):
 #         text_surface = my_font.render("gragr", False, (255, 255, 255))
 #         screen.blit(text_surface, (207, 448))
+
+
+building_button = None
 
 class Task:
     tasks = []
@@ -199,6 +205,16 @@ class Project(Task):
 
         return project
 
+def build():
+    print("sjfio")
+    global points
+    if points > points_needed:
+        if (tile.structure != None and time.time() - tile.structure.upgrade_time > 0.5) or tile.structure == None:
+            points -= points_needed      
+            Tile.build_structure(tile)
+    else: print("Not enough points")
+
+
 ### SPRITES AND OTHER VARIABLES
 center_tile = Tile(color=(255,255,255))
 center_tile.set_building("Hut")
@@ -327,11 +343,11 @@ complete_project_button = Button("Buttons/complete_button.png", 100, 790, priori
 delete_project_button = Button("Buttons/trash_button.png", 150, 790, priority=12, tint=(255,0,0), tab="pmenu")
 delete_routine_button = Button("Buttons/trash_button.png", 100, 790, priority=12, tint=(255,0,0), tab="menu")
 add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
-complete_routine_button = Button("placeholder.png", 100, 150, tint=(0,255,0))
-cancel_routine_button = Button("placeholder.png", 200, 150, tint=(255,0,0))
+complete_routine_button = Button("Buttons/DidRoutine.png", 100, 150, tint=(0,255,0))
+cancel_routine_button = Button("Buttons/DidntDoRoutine.png", 200, 150, tint=(255,0,0))
 
-building_button = Button("placeholder.png", 70, 150, priority=12, tint=(255,0,0))
-upgrade_button = Button("placeholder.png", 70, 150, priority=12, tint=(0,255,0))
+building_button = Button("placeholder.png", 70, SCREEN_HEIGHT-150, priority=12, tint=(255,0,0))
+building_button.set_function(build)
 
 complete_project_button.set_active(False)
 delete_project_button.set_active(False)
@@ -388,7 +404,7 @@ rmenu = PopUp(
 
 tile_data_tab = PopUp(
     base=RectSprite((30,30,30,180), SCREEN_WIDTH, 300, 0, SCREEN_HEIGHT-300),
-    items=[building_button,upgrade_button],
+    items=[],
     priority=8
 )
 
@@ -577,6 +593,7 @@ while running:
         update_projects(Routine.routines)
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
+        building_button.set_active(False)
         tile_tab_showing = False
 
         text = ""
@@ -605,6 +622,7 @@ while running:
         update_projects(Project.projects)
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
+        building_button.set_active(False)
         tile_tab_showing = False
 
         text = ""
@@ -632,6 +650,7 @@ while running:
     elif current_tab == "amenu":
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
+        building_button.set_active(False)
         tile_tab_showing = False
 
         text = ""
@@ -660,33 +679,25 @@ while running:
         if not tile_tab_showing:
             tile_tab_showing = True
             tile_data_tab.set_active(True)
+            building_button.set_active(True)
         tile = Tile.selected
 
         text = "Empty tile"
         if tile.structure == None:
             building_button.set_active(True)
-            upgrade_button.set_active(False)
             # building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
         else:
             text = f"{tile.structure.name}, Level {tile.structure.level}"
-            building_button.set_active(False)
-            upgrade_button.set_active(True)
+            building_button.set_active(True)
             # building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
         points_needed = tile.get_points_needed()
-    
-        def build():
-            global points
-            if points > points_needed:
-                if (tile.structure != None and time.time() - tile.structure.upgrade_time > 0.5) or tile.structure == None:
-                    points -= points_needed      
-                    Tile.build_structure(tile)
-            else: print("Not enough points")
 
-        building_button.set_function(build)
+        # building_button.set_function(build)
         display_text(text, main_font, (30, SCREEN_HEIGHT-250))
     else:
         tile_tab_showing = False
         tile_data_tab.set_active(False)
+        building_button.set_active(True)
     # if time_list[-1] == "":
     #     time_list.pop(-1)
     # if frequency_list[-1] == "":

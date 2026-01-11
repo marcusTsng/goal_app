@@ -17,7 +17,12 @@
   {
     "relative_x": 1,
     "relative_y": -1,
-    "structure": null
+    "structure": {
+      "type_name": "hut",
+      "level": 1,
+      "points_needed": 5,
+      "upgrade_time": 1768140024.1159859
+    }
   },
   {
     "relative_x": 2,
@@ -39,9 +44,9 @@
     "relative_y": 0,
     "structure": {
       "type_name": "hut",
-      "level": 2,
-      "points_needed": 10,
-      "upgrade_time": 1768138150.5528681
+      "level": 3,
+      "points_needed": 15,
+      "upgrade_time": 1768140021.749204
     }
   },
   {
