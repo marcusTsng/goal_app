@@ -7,7 +7,9 @@ pygame.init()
 pygame.display.set_caption("VOYAGE")
 title_font = pygame.font.SysFont('arialrounded', 60)
 main_font = pygame.font.SysFont('arialrounded', 30)
-description_font = pygame.font.SysFont('arialrounded', 15)
+# description_font = pygame.font.SysFont('arialrounded', 15)
+description_font = pygame.font.Font("Assets/Fonts/saxmono.ttf", 15)
+points_font = pygame.font.Font("Assets/Fonts/saxmono.ttf", 30)
 
 menu_clip_rect = pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
 
@@ -175,6 +177,8 @@ for i in range(len(name_list)):
 
 
 ## UI SETUP
+star_icon = ImageSprite("Buttons/Icons/star.png", SCREEN_WIDTH - 100, 30, (255,255,255))
+
 add_project_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
@@ -198,7 +202,7 @@ menu = PopUp(
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
         add_routine_button, name_text_box, description_text_box
     ],
-    hide_buttons=[view_routines, view_projects],
+    hide_buttons=[view_routines, view_projects,star_icon],
     set_tab="menu",
     priority = 9
 )
@@ -208,7 +212,7 @@ pmenu = PopUp(
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="pmenu"),
         add_project_button, complete_project_button, name_text_box, description_text_box
     ],
-    hide_buttons=[view_routines, view_projects],
+    hide_buttons=[view_routines, view_projects,star_icon],
     set_tab="pmenu",
     priority = 9
 )
@@ -225,7 +229,7 @@ amenu = PopUp(
 rmenu = PopUp(
     base=RectSprite((30,30,30,245), 300, 200, (SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 200) / 2),
     items=[complete_routine_button, cancel_routine_button],
-    hide_buttons=[view_routines, view_projects],
+    hide_buttons=[view_routines, view_projects, star_icon],
     set_tab="rmenu", 
     priority = 9
 )
@@ -269,9 +273,9 @@ def prompt_rmenu(routine : Routine):
         else:
             switch_to_menu("rmenu")
     else:
-        r_name = name if len(name) < 13 else f"{name[0:10]}..."
+        r_name = name[:-1] if len(name) < 16 else f"{name[0:13]}..."
         prompt = f"Have you completed {r_name}?"
-        x_pos = 80 if len(name) >= 13 else SCREEN_WIDTH/2 - (len(prompt)/2 * 8)
+        x_pos = 70 if len(name) >= 16 else SCREEN_WIDTH/2 - (len(prompt)/2 * 8)
         display_text("ROUTINE CHECK", main_font, (80,SCREEN_HEIGHT/2 - 80))
         display_text(prompt, description_font, (x_pos,SCREEN_HEIGHT/2 - 20))
 
@@ -501,7 +505,9 @@ while running:
                 if completed: print("Routine has been completed")
                 else: print("Routine was not completed")
                 time_list[i] = time.time() # error here - this sets it to the current time, so the display keeps appearing
-    if current_tab == "main":
+    if current_tab == "menu":
+        points = 1000
+        display_text(str(points), points_font, (SCREEN_WIDTH-75, 15))
         for x in info_text_boxes: x.set_active(False)
 
     pygame.display.flip()
