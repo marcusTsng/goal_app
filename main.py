@@ -343,8 +343,8 @@ complete_project_button = Button("Buttons/complete_button.png", 100, 790, priori
 delete_project_button = Button("Buttons/trash_button.png", 150, 790, priority=12, tint=(255,0,0), tab="pmenu")
 delete_routine_button = Button("Buttons/trash_button.png", 100, 790, priority=12, tint=(255,0,0), tab="menu")
 add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
-complete_routine_button = Button("placeholder.png", 100, 150, tint=(0,255,0))
-cancel_routine_button = Button("placeholder.png", 200, 150, tint=(255,0,0))
+complete_routine_button = Button("Buttons/DidRoutine.png", 100, 150, tint=(0,255,0))
+cancel_routine_button = Button("Buttons/DidntDoRoutine.png", 200, 150, tint=(255,0,0))
 
 building_button = Button("placeholder.png", 70, SCREEN_HEIGHT-150, priority=12, tint=(255,0,0))
 building_button.set_function(build)
