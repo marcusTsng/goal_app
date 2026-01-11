@@ -77,9 +77,9 @@ class Routine(Task):
         Routine.routines.pop(self.index)
     @staticmethod
     def update_names():
-        Project.projectNames = []
-        for x in Project.projects: 
-            Project.projectNames.append(x.name)
+        Routine.routineNames = []
+        for x in Routine.routines: 
+            Routine.routineNames.append(x.name)
 
 
 class Project(Task):
@@ -106,7 +106,7 @@ class Project(Task):
         for x in Project.projects: 
             Project.projectNames.append(x.name)
 
-pp = Project("pp1", 10, "ahfuwuwf", "Work")
+# pp = Project("pp1", 10, "ahfuwuwf", "Work")
 # dih = Routine("pp2", 10, "fwhifwi", "School")
 
 
@@ -155,7 +155,7 @@ def make(type=None):
 ## UI SETUP
 add_project_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
-add_routine_button = Button("placeholder.png", 100, 750, priority=2)
+add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_routine_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 
 name_text_box = Textbox(80,650,300,30, font= description_font, default_text="Title")
@@ -229,9 +229,7 @@ def show_info_for_task(task =None):
     if not task: 
         display_text("No task selected", description_font, (80, 650))
         for x in info_text_boxes: x.set_active(False)
-        for x in info_text_boxes: x.set_active(False)
         return
-
 
     name = task.name
     description = task.description
@@ -317,7 +315,7 @@ while running:
             new_offset = (SCREEN_OFFSET[0] + dx, SCREEN_OFFSET[1] + dy)
             SCREEN_OFFSET = new_offset
             set_screen_offset(new_offset)
-        elif current_tab == "menu":
+        elif current_tab == "menu" or current_tab == "pmenu":
             menu_scroll(dy)
 
         drag_base = mouse_pos
@@ -351,6 +349,8 @@ while running:
             )
 
         task : Routine = height_to_task(get_selected_task_height(), Routine.routines)
+        x, y = add_routine_button.get_pos()
+        add_routine_button.set_pos(x, len(Routine.routineNames) * 50 + 240 + get_scroll_offset())
         show_info_for_task(task)
     elif current_tab == "pmenu":
         update_projects(Project.projects)
@@ -403,7 +403,7 @@ while running:
 
         task : Project = height_to_task(get_selected_task_height(), Project.projects)
         x, y = add_project_button.get_pos()
-        add_project_button.set_pos(x, len(Project.projectNames) * 50 + 240 + get_scroll_offset())
+        add_routine_button.set_pos(x, len(Project.projectNames) * 50 + 240 + get_scroll_offset())
         show_info_for_task(task)
     if Tile.selected != None:
         tile_data_tab.set_active(True)
