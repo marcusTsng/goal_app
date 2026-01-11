@@ -112,6 +112,35 @@ class Routine(Task):
         for x in Routine.routines: 
             Routine.routineNames.append(x.name)
 
+    def to_dict(self):
+        """Convert this Project to a JSON-serializable dictionary"""
+        return {
+            "name": self.name,
+            "frequency": self.frequency,
+            "description": self.description,
+            "type": self.type,               # assuming Task has this attribute
+            "index": self.index,
+            # Add any other important Task/Project attributes here
+            # e.g. "status": self.status if exists
+            # "created": self.created.isoformat() if you have datetime
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """Reconstruct a Project from a dictionary (used when loading)"""
+        # Create new instance
+        project = cls(
+            name=data["name"],
+            duration=data["frequency"],
+            description=data["description"],
+            type=data["type"]
+        )
+
+        # Restore extra fields (index is important!)
+        project.index = data.get("index", 0)
+
+        return project
+
 
 class Project(Task):
     projects = []
@@ -169,31 +198,11 @@ class Project(Task):
 
         return project
 
-# pp = Project("pp1", 10, "ahfuwuwf", "Work")
-# dih = Routine("pp2", 10, "fwhifwi", "School")
-
-
-
-
-
-# test
-# Task.printTasks()
-# task = Task("task")
-# task2 = Task("task2")
-# task3= Task("task3")
-# Task.printTasks()
-# task2.complete()
-# Task.printTasks()
-
 ### SPRITES AND OTHER VARIABLES
 
 center_tile = Tile(color=(255,255,255))
 center_tile.set_building("Hut")
 center_tile.add_floor()
-# tile1 = Tile(0, 1)
-# tile2 = Tile(0, -1)
-# tile3 = Tile(1, 0)
-# tile4 = Tile(-1, 0)
 
 <<<<<<< Updated upstream
 def project_DS():
@@ -231,14 +240,36 @@ def load_projects_DS():
             data = json.load(f)
 
         for project in data:
-            # print(proj_data)
-            # project = Project.from_dict(proj_data)
-            print(project)
             Project(project["name"], project["duration"], project["description"], "")
 
         print(f"Loaded projects successfully")
     except Exception as e:
         print(f"Error loading projects: {e}")
+        return False
+
+def routine_DS():
+    data = []
+    for project in Routine.routines:
+        data.append(project.to_dict())
+
+    try:
+        with open("Datasave/Routines.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print("Projects successfully saved to Projects.json")
+    except Exception as e:
+        print(f"Error saving projects: {e}")
+
+def load_routine_DS():
+    try:
+        with open("Datasave/Routines.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        for routine in data:
+            Routine(routine["name"], routine["frequency"], routine["description"], "")
+
+        print(f"Loaded projects successfully")
+    except Exception as e:
+        print(f"Error loading routines: {e}")
         return False
 
 def make(type=None):
@@ -495,6 +526,7 @@ draw_gradient(background_surface, (0,23,45), (0,0,0))
 task_selected = None
 
 load_projects_DS()
+load_routine_DS()
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
@@ -505,6 +537,7 @@ while running:
             running = False
             savePoints()
             project_DS()
+            routine_DS()
         if event.type == pygame.MOUSEBUTTONDOWN:
             button_down_time = time.time()
             dragging = True
