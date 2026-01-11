@@ -381,20 +381,12 @@ def show_info_for_task(task =None):
     task.name = name_text_box.text
     task.description = description_text_box.text
     if isinstance(task, Routine):
-<<<<<<< Updated upstream
         f = time_text_box.text.strip()
         if f == "": f = 0
         else: f = int(f)
 
         task.frequency = f
         Routine.frequencies[find_in_array(Routine.routines, task)] = f
-=======
-        task.frequency = time_text_box.text
-        Routine.frequencies[find_in_array(Routine.routines, task)] = task.frequency
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     else: 
         task.duration = time_text_box.text
 
