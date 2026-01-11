@@ -609,6 +609,7 @@ while running:
         show_info_for_task(task)
     if Tile.selected != None:
         tile_data_tab.set_active(True)
+        building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12)
         display_text("Empty tile", main_font, (30, SCREEN_HEIGHT-250))
     else:
         tile_data_tab.set_active(False)
