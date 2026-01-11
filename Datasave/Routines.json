@@ -12,5 +12,12 @@
     "description": "Enter a description here",
     "type": "",
     "index": 1
+  },
+  {
+    "name": "New Routine",
+    "frequency": "10000000000000000",
+    "description": "Enter a description here",
+    "type": "Sport",
+    "index": 2
   }
 ]
