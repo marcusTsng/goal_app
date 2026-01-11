@@ -19,6 +19,8 @@ menu_clip_rect = pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
 # for f in fonts:
 #     print(f"* {f}")
 
+tile_tab_showing = False
+
 points = 0
 def savePoints():
     global points
@@ -51,9 +53,6 @@ def addTile():
 #     for i in range(len(Task.tasks)):
 #         text_surface = my_font.render("gragr", False, (255, 255, 255))
 #         screen.blit(text_surface, (207, 448))
-
-
-building_button = None
 
 class Task:
     tasks = []
@@ -268,18 +267,6 @@ def tiles_DS():
     except Exception as e:
         print(f"Error saving projects: {e}")
 
-# def load_tiles_DS():
-#     try:
-#         with open("Datasave/Tiles.json", "r", encoding="utf-8") as f:
-#             data = json.load(f)
-
-#         for routine in data:
-#             Tile(data["relative_x"], data["relative_y"], TILE_COL, data["structure"])
-
-#         print(f"Loaded tiles successfully")
-#     except Exception as e:
-#         print(f"Error loading routines: {e}")
-#         return False
 def load_tiles_DS():
     try:
         with open("Datasave/Tiles.json", "r", encoding="utf-8") as f:
@@ -343,7 +330,8 @@ add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip
 complete_routine_button = Button("placeholder.png", 100, 150, tint=(0,255,0))
 cancel_routine_button = Button("placeholder.png", 200, 150, tint=(255,0,0))
 
-building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
+building_button = Button("placeholder.png", 70, 150, priority=12, tint=(255,0,0))
+upgrade_button = Button("placeholder.png", 70, 150, priority=12, tint=(0,255,0))
 
 complete_project_button.set_active(False)
 delete_project_button.set_active(False)
@@ -400,7 +388,7 @@ rmenu = PopUp(
 
 tile_data_tab = PopUp(
     base=RectSprite((30,30,30,180), SCREEN_WIDTH, 300, 0, SCREEN_HEIGHT-300),
-    items=[building_button],
+    items=[building_button,upgrade_button],
     priority=8
 )
 
@@ -589,6 +577,7 @@ while running:
         update_projects(Routine.routines)
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
+        tile_tab_showing = False
 
         text = ""
         display_text("Routines", title_font, (80, 110))
@@ -616,6 +605,7 @@ while running:
         update_projects(Project.projects)
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
+        tile_tab_showing = False
 
         text = ""
         display_text("Projects", title_font, (80, 110))
@@ -642,6 +632,7 @@ while running:
     elif current_tab == "amenu":
         Tile.deselect_tiles()
         tile_data_tab.set_active(False)
+        tile_tab_showing = False
 
         text = ""
         display_text("Add task", title_font, (80, 110))
@@ -666,15 +657,21 @@ while running:
         add_routine_button.set_pos(x, len(Project.projectNames) * 50 + 240 + get_scroll_offset())
         show_info_for_task(task)
     if Tile.selected != None:
-        tile_data_tab.set_active(True)
+        if not tile_tab_showing:
+            tile_tab_showing = True
+            tile_data_tab.set_active(True)
         tile = Tile.selected
 
         text = "Empty tile"
         if tile.structure == None:
-            building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
+            building_button.set_active(True)
+            upgrade_button.set_active(False)
+            # building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
         else:
             text = f"{tile.structure.name}, Level {tile.structure.level}"
-            building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
+            building_button.set_active(False)
+            upgrade_button.set_active(True)
+            # building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
         points_needed = tile.get_points_needed()
     
         def build():
@@ -688,6 +685,7 @@ while running:
         building_button.set_function(build)
         display_text(text, main_font, (30, SCREEN_HEIGHT-250))
     else:
+        tile_tab_showing = False
         tile_data_tab.set_active(False)
     # if time_list[-1] == "":
     #     time_list.pop(-1)
@@ -720,7 +718,6 @@ while running:
         for x in info_text_boxes: x.set_active(False)
 
     if building_button != None and not Tile.selected:
-        print(time.time(), "j")
         building_button.set_active(False)
 
     pygame.display.flip()
