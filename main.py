@@ -39,6 +39,7 @@ def getPoints():
             else:
                 points = int(data)
     except Exception as e:
+        points = 0
         print("Error saving points to database:", e)
 
 getPoints()
