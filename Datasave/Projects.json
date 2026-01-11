@@ -12,5 +12,15 @@
     "description": "Enter a description here",
     "type": "",
     "index": 1
+<<<<<<< HEAD
+=======
+  },
+  {
+    "name": "gihudgffsjlhip",
+    "duration": "0",
+    "description": "Enter a description here",
+    "type": "",
+    "index": 2
+>>>>>>> 564241aca2e3a74f82cf9a05ef0ea4dfbeae7448
   }
 ]

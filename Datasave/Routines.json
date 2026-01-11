@@ -1,13 +1,20 @@
 [
   {
+<<<<<<< HEAD
     "name": "New Routine",
     "frequency": 10000000000000000,
     "time": 1768138258.4115388,
+=======
+    "name": "test routine 5",
+    "frequency": 1,
+    "time": 1768138359.914325,
+>>>>>>> 564241aca2e3a74f82cf9a05ef0ea4dfbeae7448
     "description": "Enter a description here",
     "type": "",
     "index": 0
   },
   {
+<<<<<<< HEAD
     "name": "bitch fuck",
     "frequency": 0,
     "time": 1768138258.411548,
@@ -19,6 +26,11 @@
     "name": "New Routine",
     "frequency": 10000000000000000,
     "time": 1768138258.411552,
+=======
+    "name": "New Routine",
+    "frequency": 10000000000000000,
+    "time": 1768138359.914334,
+>>>>>>> 564241aca2e3a74f82cf9a05ef0ea4dfbeae7448
     "description": "Enter a description here",
     "type": "",
     "index": 2
