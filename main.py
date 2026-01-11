@@ -52,7 +52,10 @@ class Task:
     def complete(self):
         Task.completedTasks.append(self)
         Task.tasks.pop(self.index)
-    def delete(self): del self
+    def delete(self): 
+        # LIAM
+        # complete this
+        del self
 
     @staticmethod
     def printTasks():
@@ -100,6 +103,8 @@ class Project(Task):
         Project.projects.append(self)
         Project.lastIndexP += 1
     def completeP(self):
+        # LIAM
+        # DEBUG THIS
         Project.completedProjects.append(self)
         print(self.index)
         Project.projects.pop(self.index)
@@ -180,10 +185,16 @@ for i in range(len(name_list)):
 star_icon = ImageSprite("Buttons/Icons/star.png", SCREEN_WIDTH - 100, 35, (255,255,255))
 
 add_project_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
-complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
+complete_project_button = Button("Buttons/complete_button.png", 100, 790, priority=12, tint=(0,255,0))
+delete_project_button = Button("Buttons/trash_button.png", 150, 790, priority=12, tint=(255,0,0))
+delete_routine_button = Button("Buttons/trash_button.png", 100, 790, priority=12, tint=(255,0,0))
 add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_routine_button = Button("placeholder.png", 100, 150, tint=(0,255,0))
 cancel_routine_button = Button("placeholder.png", 200, 150, tint=(255,0,0))
+
+complete_project_button.set_active(False)
+delete_project_button.set_active(False)
+delete_routine_button.set_active(False)
 
 name_text_box = Textbox(80,650,300,30, font= description_font, default_text="Title")
 description_text_box = Textbox(80,680,300,30, font= description_font, default_text="Description")
@@ -210,7 +221,7 @@ pmenu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="pmenu"),
-        add_project_button, complete_project_button, name_text_box, description_text_box
+        add_project_button, name_text_box, description_text_box
     ],
     hide_buttons=[view_routines, view_projects,star_icon],
     set_tab="pmenu",
@@ -293,6 +304,10 @@ def show_info_for_task(task =None):
     global last_task
     if not task: 
         display_text("No task selected", description_font, (80, 650))
+        complete_project_button.set_active(False)
+        delete_project_button.set_active(False)
+        delete_routine_button.set_active(False)
+
         for x in info_text_boxes: x.set_active(False)
         return
 
@@ -305,7 +320,13 @@ def show_info_for_task(task =None):
         description_text_box.text = description
         if isinstance(task, Routine):
             time_text_box.text = str(task.frequency)
+            delete_routine_button.set_active(True)
+            delete_routine_button.set_function(task.delete())
         else: 
+            complete_project_button.set_active(True)
+            delete_project_button.set_active(True)
+            complete_project_button.set_function(task.completeP())
+            delete_project_button.set_function(task.delete())
             time_text_box.text = str(task.duration)
     for x in info_text_boxes: x.set_active()
 
@@ -508,6 +529,11 @@ while running:
     if current_tab == "main":
         points = 1000
         display_text(str(points), points_font, (SCREEN_WIDTH-75, 25))
+
+        complete_project_button.set_active(False)
+        delete_project_button.set_active(False)
+        delete_routine_button.set_active(False)
+
         for x in info_text_boxes: x.set_active(False)
 
     pygame.display.flip()
