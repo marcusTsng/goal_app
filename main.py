@@ -323,6 +323,9 @@ def pick_routine_option(bool):
     completed_routine_prompted = bool
 
 last_task = None
+def find_in_array(arr, x):
+    for i in range(len(arr)):
+        if x == arr[i]: return i
 def show_info_for_task(task =None):
     global last_task
     if not task: 
@@ -357,6 +360,7 @@ def show_info_for_task(task =None):
     task.description = description_text_box.text
     if isinstance(task, Routine):
         task.frequency = time_text_box.text
+        Routine.frequencies[find_in_array(Routine.routines), task] = task.frequency
     else: 
         task.duration = time_text_box.text
 
@@ -542,14 +546,13 @@ while running:
             # LIAM
 
             completed = prompt_rmenu(Routine.routines[i])
-            #since names are not saved, u need to manually delete routine timings to prevent an error
 
-            if completed != None: #when completed is set to True, the user has completed the routine
-                                # when completed is set to False, the user has not completed the routine
+            if completed != None: 
                 
                 if completed: print("Routine has been completed")
                 else: print("Routine was not completed")
-                time_list[i] = time.time() # error here - this sets it to the current time, so the display keeps appearing
+
+                time_list[i] = time.time()
     if current_tab == "main":
         display_text(str(points), points_font, (SCREEN_WIDTH-75, 25))
 
