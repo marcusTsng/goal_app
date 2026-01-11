@@ -190,7 +190,7 @@ def make(type=None):
 
 
     elif type == "Routine": 
-        task = Routine("New Routine", 50, "Enter a description here", "Sport")
+        task = Routine("New Routine", 10000000000000000, "Enter a description here", "Sport")
         select_from_index(len(Routine.routines) - 1, task.name)
         routine_DS()
 
@@ -360,8 +360,12 @@ def show_info_for_task(task =None):
     task.name = name_text_box.text
     task.description = description_text_box.text
     if isinstance(task, Routine):
-        task.frequency = time_text_box.text
-        Routine.frequencies[find_in_array(Routine.routines), task] = task.frequency
+        f = time_text_box.text.strip()
+        if f == "": f = 0
+        else: f = int(f)
+
+        task.frequency = f
+        Routine.frequencies[find_in_array(Routine.routines, task)] = f
     else: 
         task.duration = time_text_box.text
 
