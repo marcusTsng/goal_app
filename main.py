@@ -180,6 +180,7 @@ def routine_DS():
     descriptions.write(Routine.routineDescs[-1] + "\n")
     descriptions.close()
 
+
 def make(type=None):
     #Make user input stuff (MARCUS)
 
@@ -349,6 +350,25 @@ def show_info_for_task(task =None):
             time_text_box.text = str(task.frequency)
             delete_routine_button.set_active(True)
             delete_routine_button.set_function(task.delete())
+            x = task.index
+            frequencies = open("Routine frequencies", "r+")
+            frequen_list = frequencies.readlines()
+            names = open("Routines", "r+")
+            name_list = names.readlines()
+            descriptions = open("Routine descriptions", "r+")
+            desc_list = descriptions.readlines()
+            frequen_list[x] = task.frequency
+            name_list[x] = task.name
+            desc_list[x] = task.description
+            frequencies.truncate()
+            for i in range(len(frequen_list)):
+                frequen_list[i] = str(frequen_list[i])
+            frequencies.writelines(frequen_list)
+            names.truncate()
+            names.writelines(name_list)
+            descriptions.truncate()
+            descriptions.writelines(desc_list)
+
         else: 
             complete_project_button.set_active(True)
             delete_project_button.set_active(True)
@@ -360,12 +380,17 @@ def show_info_for_task(task =None):
     task.name = name_text_box.text
     task.description = description_text_box.text
     if isinstance(task, Routine):
+<<<<<<< Updated upstream
         f = time_text_box.text.strip()
         if f == "": f = 0
         else: f = int(f)
 
         task.frequency = f
         Routine.frequencies[find_in_array(Routine.routines, task)] = f
+=======
+        task.frequency = time_text_box.text
+        Routine.frequencies[find_in_array(Routine.routines, task)] = task.frequency
+>>>>>>> Stashed changes
     else: 
         task.duration = time_text_box.text
 
