@@ -619,7 +619,8 @@ while running:
 
     for r in Routine.routines:
         t = r.time
-        f = r.frequency
+        f = r.frequency * 86400
+        if f == 0: f = 86400
         
         if time.time() >= t + f:
             completed = prompt_rmenu(r)
