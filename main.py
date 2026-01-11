@@ -558,6 +558,8 @@ while running:
                 else: print("Routine was not completed")
 
                 time_list[i] = time.time()
+                check_time.truncate()
+                check_time.writelines(time_list)
     if current_tab == "main":
         display_text(str(points), points_font, (SCREEN_WIDTH-75, 25))
 
