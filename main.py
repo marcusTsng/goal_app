@@ -189,8 +189,8 @@ info_text_boxes=[name_text_box, description_text_box, time_text_box]
 add_project_button.set_function(make, params="Project")
 add_routine_button.set_function(make, params="Routine")
 
-view_routines = Button("Buttons/list_button.png", 30, 30, BUTTON_BASE_COLORS)
-view_projects = Button("Buttons/list_button.png", 80, 30, BUTTON_BASE_COLORS)
+view_routines = Button("Buttons/Icons/routines_tab.png", 30, 30, BUTTON_BASE_COLORS)
+view_projects = Button("Buttons/Icons/projects_tab.png", 80, 30, BUTTON_BASE_COLORS)
 
 menu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
