@@ -177,7 +177,7 @@ for i in range(len(name_list)):
 
 
 ## UI SETUP
-star_icon = ImageSprite("Buttons/Icons/star.png", SCREEN_WIDTH - 100, 30, (255,255,255))
+star_icon = ImageSprite("Buttons/Icons/star.png", SCREEN_WIDTH - 100, 35, (255,255,255))
 
 add_project_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
@@ -505,9 +505,9 @@ while running:
                 if completed: print("Routine has been completed")
                 else: print("Routine was not completed")
                 time_list[i] = time.time() # error here - this sets it to the current time, so the display keeps appearing
-    if current_tab == "menu":
+    if current_tab == "main":
         points = 1000
-        display_text(str(points), points_font, (SCREEN_WIDTH-75, 15))
+        display_text(str(points), points_font, (SCREEN_WIDTH-75, 25))
         for x in info_text_boxes: x.set_active(False)
 
     pygame.display.flip()
