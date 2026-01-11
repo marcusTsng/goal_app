@@ -156,7 +156,8 @@ def make(type=None):
 add_project_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_project_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
 add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
-complete_routine_button = Button("placeholder.png", 250, 750, priority=2, tint=(255,0,0))
+complete_routine_button = Button("placeholder.png", 100, 150, tint=(0,255,0))
+cancel_routine_button = Button("placeholder.png", 200, 150, tint=(255,0,0))
 
 name_text_box = Textbox(80,650,300,30, font= description_font, default_text="Title")
 description_text_box = Textbox(80,680,300,30, font= description_font, default_text="Description")
@@ -173,7 +174,7 @@ menu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="menu"),
-        add_routine_button, complete_routine_button, name_text_box, description_text_box
+        add_routine_button, name_text_box, description_text_box
     ],
     hide_buttons=[view_routines, view_projects],
     set_tab="menu",
@@ -193,10 +194,17 @@ amenu = PopUp(
     base=RectSprite((30,30,30,180),SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0),
     items=[
         Button("Buttons/cancel_button.png", 50, 50, BUTTON_BASE_COLORS, priority=10, tab="amenu"),
-        
     ],
     hide_buttons=[view_routines, view_projects],
     set_tab="amenu",
+    priority = 9
+)
+
+rmenu = PopUp(
+    base=RectSprite((30,30,30,245), 300, 200, (SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 200) / 2),
+    items=[complete_routine_button, cancel_routine_button],
+    hide_buttons=[view_routines, view_projects],
+    set_tab="rmenu", 
     priority = 9
 )
 
@@ -207,21 +215,52 @@ tile_data_tab = PopUp(
 )
 
 def switch_to_menu(name):
+    deselect_task_in_menu()
     if name == "menu":
         menu.set_active(True)
-        deselect_task_in_menu()
     elif name == "pmenu": 
         pmenu.set_active(True)
-        deselect_task_in_menu()
     elif name == "amenu":
         amenu.set_active(True)
-        deselect_task_in_menu()
+    elif name == "rmenu":
+        rmenu.set_active(True)
     set_tab(name)
 def hide_menus(): 
     menu.set_active(False)
     pmenu.set_active(False)
     amenu.set_active(False)
     set_tab("main")
+
+completed_routine_prompted = None
+routine_queue = []
+def prompt_rmenu(routine : Routine):
+    global completed_routine_prompted, routine_queue
+    tab = get_tab()
+
+    if not routine in routine_queue: 
+        routine_queue.append(routine)
+
+    name = routine_queue[0].name 
+    if tab != "rmenu":
+        completed_routine_prompted = None
+        if tab != "main": hide_menus()
+        else:
+            switch_to_menu("rmenu")
+    else:
+        r_name = name if len(name) < 13 else f"{name[0:10]}..."
+        prompt = f"Have you completed {r_name}?"
+        x_pos = 80 if len(name) >= 13 else SCREEN_WIDTH/2 - (len(prompt)/2 * 8)
+        display_text("ROUTINE CHECK", main_font, (80,SCREEN_HEIGHT/2 - 80))
+        display_text(prompt, description_font, (x_pos,SCREEN_HEIGHT/2 - 20))
+
+        if completed_routine_prompted != None: 
+            routine_queue.remove(routine_queue[0])
+            switch_to_menu("main")
+            return completed_routine_prompted
+def pick_routine_option(bool):
+    print("PICK")
+    global completed_routine_prompted
+    completed_routine_prompted = bool
 
 last_task = None
 def show_info_for_task(task =None):
@@ -269,6 +308,8 @@ pmenu.items[1].set_function(hide_menus)
 amenu.items[1].set_function(hide_menus)
 view_projects.set_function(switch_to_menu, "pmenu")
 view_routines.set_function(switch_to_menu, "menu")
+complete_routine_button.set_function(func=pick_routine_option, params=True)
+cancel_routine_button.set_function(func=pick_routine_option, params=False)
 # add.set_function(switch_to_menu, "amenu")
 
 ### MAIN GAME LOOP
@@ -418,10 +459,21 @@ while running:
         # print(time_list[i] + 5 * Routine.frequencies[i])
         # print(time_list[i] + 5)
         # print(Routine.frequencies[i])
-        if time.time() >= time_list[i] + 5:
-            print("MAKE MENU FOR ALERT") #MARCUS
 
-            time_list[i] = time.time() #this line should be run after the user clicks completed routine or didnt complete routine
+        if time.time() >= time_list[i] + 5: 
+            # LIAM
+
+            completed = prompt_rmenu(Routine.routines[i]) 
+            #since names are not saved, u need to manually delete routine timings to prevent an error
+
+            if completed != None: #when completed is set to True, the user has completed the routine
+                                # when completed is set to False, the user has not completed the routine
+                
+                if completed: print("Routine has been completed")
+                else: print("Routine was not completed")
+
+                time_list[i] = time.time() # error here - this sets it to the current time, so the display keeps appearing
+        
     if current_tab == "main":
         for x in info_text_boxes: x.set_active(False)
 
