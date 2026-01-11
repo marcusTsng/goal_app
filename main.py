@@ -62,12 +62,14 @@ class Routine(Task):
     routineNames = []
     completedRoutines = []
     frequencies = []
+    routineDescs = []
     lastIndexR = 0
     def __init__(self, name, frequency, description, type):
         super().__init__(name, description, type)
         self.name = name
         self.frequency = frequency
         self.index = Routine.lastIndexR
+        Routine.routineDescs.append(self.description)
         Routine.frequencies.append(self.frequency)
         Routine.routineNames.append(self.name)
         Routine.routines.append(self)
@@ -144,12 +146,32 @@ def make(type=None):
 
 
     elif type == "Routine": 
-        task = Routine("New Routine", 1, "Enter a description here", "Sport")
+        task = Routine("New Routine", 50, "Enter a description here", "Sport")
         select_from_index(len(Routine.routines) - 1, task.name)
         timings = open("Routine timings", "a")
         timings.write(str(time.time()) + "\n")
         timings.close()
+        frequencies = open("Routine frequencies", "a")
+        Routine.frequencies[-1] = str(Routine.frequencies[-1])
+        frequencies.write(Routine.frequencies[-1] + "\n")
+        Routine.frequencies[-1] = float(Routine.frequencies[-1])
+        frequencies.close()
+        names = open("Routines", "a")
+        names.write(Routine.routineNames[-1] + "\n")
+        names.close()
+        descriptions = open("Routine descriptions", "a")
+        descriptions.write(Routine.routineDescs[-1] + "\n")
+        descriptions.close()
 
+add_names = open("Routines", "r")
+name_list = add_names.readlines()
+add_frequencies = open("Routine frequencies", "r")
+frequency_list = add_frequencies.readlines()
+add_descriptions = open("Routine descriptions", "r")
+description_list = add_descriptions.readlines()
+
+for i in range(len(name_list)):
+    task = Routine(name_list[i], frequency_list[i], description_list[i], "sport")
 
 
 ## UI SETUP
@@ -452,18 +474,25 @@ while running:
     else:
         tile_data_tab.set_active(False)
     check_time = open("Routine timings", "r")
+    check_frequency = open("Routine frequencies")
+    frequency_list = check_frequency.readlines()
     time_list = check_time.readlines()
+    # if time_list[-1] == "":
+    #     time_list.pop(-1)
+    # if frequency_list[-1] == "":
+    #     frequency_list.pop(-1)
     for i in range(len(time_list)):
         time_list[i] = float(time_list[i])
+        frequency_list[i] = float(frequency_list[i])
         # print(time.time())
         # print(time_list[i] + 5 * Routine.frequencies[i])
         # print(time_list[i] + 5)
         # print(Routine.frequencies[i])
 
-        if time.time() >= time_list[i] + 5: 
+        if time.time() >= time_list[i] + frequency_list[i] and i <= len(Routine.routines) - 1:
             # LIAM
 
-            completed = prompt_rmenu(Routine.routines[i]) 
+            completed = prompt_rmenu(Routine.routines[i])
             #since names are not saved, u need to manually delete routine timings to prevent an error
 
             if completed != None: #when completed is set to True, the user has completed the routine
@@ -471,9 +500,7 @@ while running:
                 
                 if completed: print("Routine has been completed")
                 else: print("Routine was not completed")
-
                 time_list[i] = time.time() # error here - this sets it to the current time, so the display keeps appearing
-        
     if current_tab == "main":
         for x in info_text_boxes: x.set_active(False)
 
