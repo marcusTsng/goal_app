@@ -112,6 +112,35 @@ class Routine(Task):
         for x in Routine.routines: 
             Routine.routineNames.append(x.name)
 
+    def to_dict(self):
+        """Convert this Project to a JSON-serializable dictionary"""
+        return {
+            "name": self.name,
+            "frequency": self.frequency,
+            "description": self.description,
+            "type": self.type,               # assuming Task has this attribute
+            "index": self.index,
+            # Add any other important Task/Project attributes here
+            # e.g. "status": self.status if exists
+            # "created": self.created.isoformat() if you have datetime
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """Reconstruct a Project from a dictionary (used when loading)"""
+        # Create new instance
+        project = cls(
+            name=data["name"],
+            duration=data["frequency"],
+            description=data["description"],
+            type=data["type"]
+        )
+
+        # Restore extra fields (index is important!)
+        project.index = data.get("index", 0)
+
+        return project
+
 
 class Project(Task):
     projects = []
@@ -173,36 +202,16 @@ class Project(Task):
 
         return project
 
-# pp = Project("pp1", 10, "ahfuwuwf", "Work")
-# dih = Routine("pp2", 10, "fwhifwi", "School")
-
-
-
-
-
-# test
-# Task.printTasks()
-# task = Task("task")
-# task2 = Task("task2")
-# task3= Task("task3")
-# Task.printTasks()
-# task2.complete()
-# Task.printTasks()
-
 ### SPRITES AND OTHER VARIABLES
-
 center_tile = Tile(color=(255,255,255))
 center_tile.set_building("Hut")
 center_tile.add_floor()
-# tile1 = Tile(0, 1)
-# tile2 = Tile(0, -1)
-# tile3 = Tile(1, 0)
-# tile4 = Tile(-1, 0)
 
 def project_DS():
     data = []
     for project in Project.projects:
         data.append(project.to_dict())
+<<<<<<< HEAD
 
 # def routine_DS(): MARCUS JSON
 #     timings = open("Routine timings", "a")
@@ -219,6 +228,8 @@ def project_DS():
 #     descriptions = open("Routine descriptions", "a")
 #     descriptions.write(Routine.routineDescs[-1])
 #     descriptions.close()
+=======
+>>>>>>> 85b40cc23475ed6b6c9bae89f688cf71e5cac738
 
     try:
         with open("Datasave/Projects.json", "w", encoding="utf-8") as f:
@@ -233,9 +244,6 @@ def load_projects_DS():
             data = json.load(f)
 
         for project in data:
-            # print(proj_data)
-            # project = Project.from_dict(proj_data)
-            print(project)
             Project(project["name"], project["duration"], project["description"], "")
 
         print(f"Loaded projects successfully")
@@ -243,9 +251,32 @@ def load_projects_DS():
         print(f"Error loading projects: {e}")
         return False
 
-def make(type=None):
-    #Make user input stuff (MARCUS)
+def routine_DS():
+    data = []
+    for project in Routine.routines:
+        data.append(project.to_dict())
 
+    try:
+        with open("Datasave/Routines.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print("Projects successfully saved to Projects.json")
+    except Exception as e:
+        print(f"Error saving projects: {e}")
+
+def load_routine_DS():
+    try:
+        with open("Datasave/Routines.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        for routine in data:
+            Routine(routine["name"], routine["frequency"], routine["description"], "")
+
+        print(f"Loaded projects successfully")
+    except Exception as e:
+        print(f"Error loading routines: {e}")
+        return False
+
+def make(type=None):
     task = None
     if type == "Project": 
         task = Project("New Project", 0, "Enter a description here", "Sport") 
@@ -255,16 +286,6 @@ def make(type=None):
     elif type == "Routine": 
         task = Routine("New Routine", 10000000000000000, "Enter a description here", "Sport")
         select_from_index(len(Routine.routines) - 1, task.name)
-
-# add_names = open("Routines", "r") Marcus JSON
-# name_list = add_names.readlines()
-# add_frequencies = open("Routine frequencies", "r")
-# frequency_list = add_frequencies.readlines()
-# add_descriptions = open("Routine descriptions", "r")
-# description_list = add_descriptions.readlines()
-
-# for i in range(len(name_list)): MARCUS JSON
-#     task = Routine(name_list[i], frequency_list[i], description_list[i], "sport")
 
 
 ## UI SETUP
@@ -412,30 +433,6 @@ def show_info_for_task(task =None):
             delete_routine_button.set_active(True)
             delete_routine_button.set_function(task.delete())
             x = task.index
-            # frequencies = open("Routine frequencies", "r+") MARCUS JSONFopen
-            # frequen_list = frequencies.readlines()
-            # print(frequen_list)
-            # names = open("Routines", "r+")
-            # name_list = names.readlines()
-            # descriptions = open("Routine descriptions", "r+")
-            # desc_list = descriptions.readlines()
-            # frequen_list[x] = task.frequency
-            # name_list[x] = task.name
-            # desc_list[x] = task.description
-            # frequencies.seek(0)
-            # frequencies.truncate()
-            # names.seek(0)
-            # names.truncate()
-            # descriptions.seek(0)
-            # descriptions.truncate()
-            # for i in range(len(frequen_list)):
-            #     frequen_list[i] = str(frequen_list[i])
-            # frequencies.writelines(frequen_list)
-            # names.writelines(name_list)
-            # descriptions.writelines(desc_list)
-            # frequencies.close()
-            # names.close()
-            # descriptions.close()
         else: 
             complete_project_button.set_active(True)
             delete_project_button.set_active(True)
@@ -497,6 +494,7 @@ draw_gradient(background_surface, (0,23,45), (0,0,0))
 task_selected = None
 
 load_projects_DS()
+load_routine_DS()
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
@@ -507,6 +505,7 @@ while running:
             running = False
             savePoints()
             project_DS()
+            routine_DS()
         if event.type == pygame.MOUSEBUTTONDOWN:
             button_down_time = time.time()
             dragging = True
