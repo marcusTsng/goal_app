@@ -47,9 +47,6 @@ def addTile():
     x,y = Tile.get_random_placement()
     Tile(x,y)
 
-def addBuilding():
-    print("Pls make ts") # MARCUS
-
 # def taskDisplay():
 #     for i in range(len(Task.tasks)):
 #         text_surface = my_font.render("gragr", False, (255, 255, 255))
