@@ -7,10 +7,10 @@ BUTTON_BASE_COLORS = (60,60,60)#(230,145,56)
 PANEL_BG_COLOR = (30,30,30,180)
 SELECTION_TINT = (180,180,180)
 
-TAB = "main" # tab can be main, menu, add
+TAB = "main" 
 
 # SETUP
-import pygame, random, time
+import pygame, random
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # FUNCTIONS

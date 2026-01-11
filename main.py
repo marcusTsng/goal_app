@@ -1,6 +1,4 @@
 import pygame
-import random
-import math
 import time
 import json
 from pygame_objs import *
@@ -90,16 +88,13 @@ class Routine(Task):
     routines = []
     routineNames = []
     completedRoutines = []
-    frequencies = []
-    routineDescs = []
     lastIndexR = 0
     def __init__(self, name, frequency, description, type):
         super().__init__(name, description, type)
         self.name = name
         self.frequency = frequency
+        self.time = time.time()
         self.index = Routine.lastIndexR
-        Routine.routineDescs.append(self.description)
-        Routine.frequencies.append(self.frequency)
         Routine.routineNames.append(self.name)
         Routine.routines.append(self)
         Routine.lastIndexR += 1
@@ -117,6 +112,7 @@ class Routine(Task):
         return {
             "name": self.name,
             "frequency": self.frequency,
+            "time": self.time,
             "description": self.description,
             "type": self.type,               # assuming Task has this attribute
             "index": self.index,
@@ -131,7 +127,8 @@ class Routine(Task):
         # Create new instance
         project = cls(
             name=data["name"],
-            duration=data["frequency"],
+            frequency=data["frequency"],
+            time=data["time"],
             description=data["description"],
             type=data["type"]
         )
@@ -367,7 +364,7 @@ def switch_to_menu(name):
 def hide_menus(): 
     menu.set_active(False)
     pmenu.set_active(False)
-    amenu.set_active(False)
+    rmenu.set_active(False)
     set_tab("main")
 
 completed_routine_prompted = None
@@ -394,10 +391,10 @@ def prompt_rmenu(routine : Routine):
 
         if completed_routine_prompted != None: 
             routine_queue.remove(routine_queue[0])
+            hide_menus()
             switch_to_menu("main")
             return completed_routine_prompted
 def pick_routine_option(bool):
-    print("PICK")
     global completed_routine_prompted
     completed_routine_prompted = bool
 
@@ -444,11 +441,6 @@ def show_info_for_task(task =None):
         else: f = int(f)
 
         task.frequency = f
-        Routine.frequencies[find_in_array(Routine.routines, task)] = f
-        task.frequency = time_text_box.text
-        Routine.frequencies[find_in_array(Routine.routines, task)] = task.frequency
-        task.frequency = time_text_box.text
-        Routine.frequencies[find_in_array(Routine.routines, task)] = task.frequency
     else: 
         task.duration = time_text_box.text
 
@@ -620,35 +612,26 @@ while running:
         display_text("Empty tile", main_font, (30, SCREEN_HEIGHT-250))
     else:
         tile_data_tab.set_active(False)
-    check_time = open("Routine timings", "r") #MARCUS JSON
-    check_frequency = open("Routine frequencies")
-    frequency_list = check_frequency.readlines()
-    time_list = check_time.readlines()
     # if time_list[-1] == "":
     #     time_list.pop(-1)
     # if frequency_list[-1] == "":
     #     frequency_list.pop(-1)
-    for i in range(len(time_list)):
-        time_list[i] = float(time_list[i])
-        frequency_list[i] = float(frequency_list[i])
-        # print(time.time())
-        # print(time_list[i] + 5 * Routine.frequencies[i])
-        # print(time_list[i] + 5)
-        # print(Routine.frequencies[i])
 
-        if time.time() >= time_list[i] + frequency_list[i] and i <= len(Routine.routines) - 1:
-            # MARCUS JSON
-
-            completed = prompt_rmenu(Routine.routines[i])
+    for r in Routine.routines:
+        t = r.time
+        f = r.frequency
+        
+        if time.time() >= t + f:
+            completed = prompt_rmenu(r)
 
             if completed != None: 
                 
-                if completed: print("Routine has been completed")
+                if completed:
+                    points += 10
+                    print("Routine has been completed")
                 else: print("Routine was not completed")
 
-                time_list[i] = time.time()
-                # check_time.truncate()
-                # check_time.writelines(time_list)
+                r.time = time.time()
     if current_tab == "main":
         display_text(str(points), points_font, (SCREEN_WIDTH-75, 25))
 

@@ -1,23 +1,26 @@
 [
   {
     "name": "New Routine",
-    "frequency": "10000000000000000",
+    "frequency": 10000000000000000,
+    "time": 1768127340.5200799,
     "description": "Enter a description here",
     "type": "",
     "index": 0
   },
   {
     "name": "bitch fuck",
-    "frequency": "10000000000000000",
+    "frequency": 10,
+    "time": 1768127340.520083,
     "description": "Enter a description here",
     "type": "",
     "index": 1
   },
   {
     "name": "New Routine",
-    "frequency": "10000000000000000",
+    "frequency": 10000000000000000,
+    "time": 1768127340.520086,
     "description": "Enter a description here",
-    "type": "Sport",
+    "type": "",
     "index": 2
   }
 ]
