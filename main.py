@@ -117,6 +117,7 @@ class Project(Task):
     projects = []
     projectNames = []
     completedProjects = []
+    deletedProjects = []
     lastIndexP = 0 # this thing it bad order bad booboo
     def __init__(self, name, duration, description, type):
         super().__init__(name, description, type)
@@ -129,11 +130,14 @@ class Project(Task):
     def completeP(self):
         # LIAM
         # DEBUG THIS
-        print("fat monkey bitch")
         Project.completedProjects.append(self)
-        print(self.index)
-        Project.projects.pop(self.index)
+        Project.projects.remove(self)
+        deselect_task_in_menu()
         addTile()
+    def delete(self):
+        Project.deletedProjects.append(self)
+        Project.projects.remove(self)
+        deselect_task_in_menu()
     @staticmethod
     def update_names():
         Project.projectNames = []
@@ -195,12 +199,11 @@ center_tile.add_floor()
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
-<<<<<<< Updated upstream
 def project_DS():
     data = []
     for project in Project.projects:
         data.append(project.to_dict())
-=======
+
 # def routine_DS(): MARCUS JSON
 #     timings = open("Routine timings", "a")
 #     timings.write(str(time.time()) + "\\n")
@@ -216,7 +219,6 @@ def project_DS():
 #     descriptions = open("Routine descriptions", "a")
 #     descriptions.write(Routine.routineDescs[-1])
 #     descriptions.close()
->>>>>>> Stashed changes
 
     try:
         with open("Datasave/Projects.json", "w", encoding="utf-8") as f:
