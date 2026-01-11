@@ -128,6 +128,7 @@ class Project(Task):
     def completeP(self):
         # LIAM
         # DEBUG THIS
+        print("fat monkey bitch")
         Project.completedProjects.append(self)
         print(self.index)
         Project.projects.pop(self.index)
@@ -210,9 +211,9 @@ for i in range(len(name_list)):
 star_icon = ImageSprite("Buttons/Icons/star.png", SCREEN_WIDTH - 100, 35, (255,255,255))
 
 add_project_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
-complete_project_button = Button("Buttons/complete_button.png", 100, 790, priority=12, tint=(0,255,0))
-delete_project_button = Button("Buttons/trash_button.png", 150, 790, priority=12, tint=(255,0,0))
-delete_routine_button = Button("Buttons/trash_button.png", 100, 790, priority=12, tint=(255,0,0))
+complete_project_button = Button("Buttons/complete_button.png", 100, 790, priority=12, tint=(0,255,0), tab="pmenu")
+delete_project_button = Button("Buttons/trash_button.png", 150, 790, priority=12, tint=(255,0,0), tab="pmenu")
+delete_routine_button = Button("Buttons/trash_button.png", 100, 790, priority=12, tint=(255,0,0), tab="menu")
 add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_routine_button = Button("placeholder.png", 100, 150, tint=(0,255,0))
 cancel_routine_button = Button("placeholder.png", 200, 150, tint=(255,0,0))
@@ -372,8 +373,8 @@ def show_info_for_task(task =None):
         else: 
             complete_project_button.set_active(True)
             delete_project_button.set_active(True)
-            complete_project_button.set_function(task.completeP())
-            delete_project_button.set_function(task.delete())
+            complete_project_button.set_function(task.completeP)
+            delete_project_button.set_function(task.delete)
             time_text_box.text = str(task.duration)
     for x in info_text_boxes: x.set_active()
 
