@@ -206,7 +206,6 @@ class Project(Task):
         return project
 
 def build():
-    print("sjfio")
     global points
     if points > points_needed:
         if (tile.structure != None and time.time() - tile.structure.upgrade_time > 0.5) or tile.structure == None:
@@ -216,7 +215,7 @@ def build():
 
 
 ### SPRITES AND OTHER VARIABLES
-center_tile = Tile(color=(255,255,255))
+center_tile = Tile()
 center_tile.set_building("Hut")
 center_tile.add_floor()
 
@@ -346,7 +345,7 @@ add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip
 complete_routine_button = Button("Buttons/DidRoutine.png", 100, 150, tint=(0,255,0))
 cancel_routine_button = Button("Buttons/DidntDoRoutine.png", 200, 150, tint=(255,0,0))
 
-building_button = Button("placeholder.png", 70, SCREEN_HEIGHT-150, priority=12, tint=(255,0,0))
+building_button = Button("Buttons/BuildingUpgrade.png", 170, SCREEN_HEIGHT-150, priority=12, tint=(0,0,0))
 building_button.set_function(build)
 
 complete_project_button.set_active(False)
@@ -541,7 +540,7 @@ task_selected = None
 load_projects_DS()
 load_routine_DS()
 load_tiles_DS()
-if len(Tile.tiles) == 0:
+if len(Tile.tiles) < 5:
     for _ in range(5): addTile()
 
 while running:
