@@ -20,6 +20,27 @@ menu_clip_rect = pygame.Rect(80, 220, SCREEN_WIDTH - 160, 400)
 # for f in fonts:
 #     print(f"* {f}")
 
+points = 0
+def savePoints():
+    global points
+    try:
+        with open("points.txt", "w") as f:
+            f.write(str(points))
+    except Exception as e:
+        print("Error retrieving points from database:", e)
+def getPoints():
+    global points
+    try:
+        with open("points.txt", "r") as f:
+            data = f.read().strip()
+            if data == "":
+                points = 0
+            else:
+                points = int(data)
+    except Exception as e:
+        print("Error saving points to database:", e)
+
+points = getPoints()
 
 def addTile():
     x,y = Tile.get_random_placement()
@@ -379,6 +400,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            savePoints()
         if event.type == pygame.MOUSEBUTTONDOWN:
             button_down_time = time.time()
             dragging = True
@@ -527,7 +549,6 @@ while running:
                 else: print("Routine was not completed")
                 time_list[i] = time.time() # error here - this sets it to the current time, so the display keeps appearing
     if current_tab == "main":
-        points = 1000
         display_text(str(points), points_font, (SCREEN_WIDTH-75, 25))
 
         complete_project_button.set_active(False)
