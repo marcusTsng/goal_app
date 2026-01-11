@@ -237,6 +237,32 @@ def routine_DS():
     data = []
     for project in Routine.routines:
         data.append(project.to_dict())
+<<<<<<< Updated upstream
+=======
+
+    try:
+        with open("Datasave/Routines.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print("Projects successfully saved to Projects.json")
+    except Exception as e:
+        print(f"Error saving projects: {e}")
+
+def load_routine_DS():
+    try:
+        with open("Datasave/Routines.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        for routine in data:
+            Routine(routine["name"], routine["frequency"], routine["description"], "")
+
+        print(f"Loaded projects successfully")
+    except Exception as e:
+        print(f"Error loading routines: {e}")
+        return False
+
+def make(type=None):
+    #Make user input stuff (MARCUS)
+>>>>>>> Stashed changes
 
     try:
         with open("Datasave/Routines.json", "w", encoding="utf-8") as f:
