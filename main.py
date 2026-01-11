@@ -195,10 +195,28 @@ center_tile.add_floor()
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
+<<<<<<< Updated upstream
 def project_DS():
     data = []
     for project in Project.projects:
         data.append(project.to_dict())
+=======
+# def routine_DS(): MARCUS JSON
+#     timings = open("Routine timings", "a")
+#     timings.write(str(time.time()) + "\\n")
+#     timings.close()
+#     frequencies = open("Routine frequencies", "a")
+#     Routine.frequencies[-1] = str(Routine.frequencies[-1])
+#     frequencies.write(Routine.frequencies[-1] + "\\n")
+#     Routine.frequencies[-1] = float(Routine.frequencies[-1])
+#     frequencies.close()
+#     names = open("Routines", "a")
+#     names.write(Routine.routineNames[-1])
+#     names.close()
+#     descriptions = open("Routine descriptions", "a")
+#     descriptions.write(Routine.routineDescs[-1])
+#     descriptions.close()
+>>>>>>> Stashed changes
 
     try:
         with open("Datasave/Projects.json", "w", encoding="utf-8") as f:
@@ -236,15 +254,15 @@ def make(type=None):
         task = Routine("New Routine", 10000000000000000, "Enter a description here", "Sport")
         select_from_index(len(Routine.routines) - 1, task.name)
 
-add_names = open("Routines", "r")
-name_list = add_names.readlines()
-add_frequencies = open("Routine frequencies", "r")
-frequency_list = add_frequencies.readlines()
-add_descriptions = open("Routine descriptions", "r")
-description_list = add_descriptions.readlines()
+# add_names = open("Routines", "r") Marcus JSON
+# name_list = add_names.readlines()
+# add_frequencies = open("Routine frequencies", "r")
+# frequency_list = add_frequencies.readlines()
+# add_descriptions = open("Routine descriptions", "r")
+# description_list = add_descriptions.readlines()
 
-for i in range(len(name_list)):
-    task = Routine(name_list[i], frequency_list[i], description_list[i], "sport")
+# for i in range(len(name_list)): MARCUS JSON
+#     task = Routine(name_list[i], frequency_list[i], description_list[i], "sport")
 
 
 ## UI SETUP
@@ -392,30 +410,30 @@ def show_info_for_task(task =None):
             delete_routine_button.set_active(True)
             delete_routine_button.set_function(task.delete())
             x = task.index
-            frequencies = open("Routine frequencies", "r+")
-            frequen_list = frequencies.readlines()
-            print(frequen_list)
-            names = open("Routines", "r+")
-            name_list = names.readlines()
-            descriptions = open("Routine descriptions", "r+")
-            desc_list = descriptions.readlines()
-            frequen_list[x] = task.frequency
-            name_list[x] = task.name
-            desc_list[x] = task.description
-            frequencies.seek(0)
-            frequencies.truncate()
-            names.seek(0)
-            names.truncate()
-            descriptions.seek(0)
-            descriptions.truncate()
-            for i in range(len(frequen_list)):
-                frequen_list[i] = str(frequen_list[i])
-            frequencies.writelines(frequen_list)
-            names.writelines(name_list)
-            descriptions.writelines(desc_list)
-            frequencies.close()
-            names.close()
-            descriptions.close()
+            # frequencies = open("Routine frequencies", "r+") MARCUS JSONFopen
+            # frequen_list = frequencies.readlines()
+            # print(frequen_list)
+            # names = open("Routines", "r+")
+            # name_list = names.readlines()
+            # descriptions = open("Routine descriptions", "r+")
+            # desc_list = descriptions.readlines()
+            # frequen_list[x] = task.frequency
+            # name_list[x] = task.name
+            # desc_list[x] = task.description
+            # frequencies.seek(0)
+            # frequencies.truncate()
+            # names.seek(0)
+            # names.truncate()
+            # descriptions.seek(0)
+            # descriptions.truncate()
+            # for i in range(len(frequen_list)):
+            #     frequen_list[i] = str(frequen_list[i])
+            # frequencies.writelines(frequen_list)
+            # names.writelines(name_list)
+            # descriptions.writelines(desc_list)
+            # frequencies.close()
+            # names.close()
+            # descriptions.close()
         else: 
             complete_project_button.set_active(True)
             delete_project_button.set_active(True)
@@ -606,7 +624,7 @@ while running:
         display_text("Empty tile", main_font, (30, SCREEN_HEIGHT-250))
     else:
         tile_data_tab.set_active(False)
-    check_time = open("Routine timings", "r")
+    check_time = open("Routine timings", "r") #MARCUS JSON
     check_frequency = open("Routine frequencies")
     frequency_list = check_frequency.readlines()
     time_list = check_time.readlines()
@@ -623,7 +641,7 @@ while running:
         # print(Routine.frequencies[i])
 
         if time.time() >= time_list[i] + frequency_list[i] and i <= len(Routine.routines) - 1:
-            # LIAM
+            # MARCUS JSON
 
             completed = prompt_rmenu(Routine.routines[i])
 
