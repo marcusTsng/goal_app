@@ -167,18 +167,18 @@ center_tile.add_floor()
 
 def routine_DS():
     timings = open("Routine timings", "a")
-    timings.write(str(time.time()) + "\n")
+    timings.write(str(time.time()) + "\\n")
     timings.close()
     frequencies = open("Routine frequencies", "a")
     Routine.frequencies[-1] = str(Routine.frequencies[-1])
-    frequencies.write(Routine.frequencies[-1] + "\n")
+    frequencies.write(Routine.frequencies[-1] + "\\n")
     Routine.frequencies[-1] = float(Routine.frequencies[-1])
     frequencies.close()
     names = open("Routines", "a")
-    names.write(Routine.routineNames[-1] + "\n")
+    names.write(Routine.routineNames[-1])
     names.close()
     descriptions = open("Routine descriptions", "a")
-    descriptions.write(Routine.routineDescs[-1] + "\n")
+    descriptions.write(Routine.routineDescs[-1])
     descriptions.close()
 
 
@@ -354,6 +354,7 @@ def show_info_for_task(task =None):
             x = task.index
             frequencies = open("Routine frequencies", "r+")
             frequen_list = frequencies.readlines()
+            print(frequen_list)
             names = open("Routines", "r+")
             name_list = names.readlines()
             descriptions = open("Routine descriptions", "r+")
@@ -361,15 +362,20 @@ def show_info_for_task(task =None):
             frequen_list[x] = task.frequency
             name_list[x] = task.name
             desc_list[x] = task.description
+            frequencies.seek(0)
             frequencies.truncate()
+            names.seek(0)
+            names.truncate()
+            descriptions.seek(0)
+            descriptions.truncate()
             for i in range(len(frequen_list)):
                 frequen_list[i] = str(frequen_list[i])
             frequencies.writelines(frequen_list)
-            names.truncate()
             names.writelines(name_list)
-            descriptions.truncate()
             descriptions.writelines(desc_list)
-
+            frequencies.close()
+            names.close()
+            descriptions.close()
         else: 
             complete_project_button.set_active(True)
             delete_project_button.set_active(True)
@@ -387,6 +393,11 @@ def show_info_for_task(task =None):
 
         task.frequency = f
         Routine.frequencies[find_in_array(Routine.routines, task)] = f
+<<<<<<< Updated upstream
+=======
+        task.frequency = time_text_box.text
+        Routine.frequencies[find_in_array(Routine.routines, task)] = task.frequency
+>>>>>>> Stashed changes
     else: 
         task.duration = time_text_box.text
 
