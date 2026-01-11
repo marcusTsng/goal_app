@@ -3,7 +3,7 @@ import time
 import json
 from pygame_objs import *
 pygame.init()
-pygame.display.set_caption("VOYAGE")
+pygame.display.set_caption("CONQUEST")
 title_font = pygame.font.SysFont('arialrounded', 60)
 main_font = pygame.font.SysFont('arialrounded', 30)
 # description_font = pygame.font.SysFont('arialrounded', 15)
@@ -46,7 +46,6 @@ getPoints()
 def addTile():
     x,y = Tile.get_random_placement()
     Tile(x,y)
-for _ in range(5): addTile()
 
 def addBuilding():
     print("Pls make ts") # MARCUS
@@ -56,6 +55,8 @@ def addBuilding():
 #         text_surface = my_font.render("gragr", False, (255, 255, 255))
 #         screen.blit(text_surface, (207, 448))
 
+
+building_button = None
 
 class Task:
     tasks = []
@@ -255,18 +256,69 @@ def load_routine_DS():
         print(f"Error loading routines: {e}")
         return False
 
-def load_routine_DS():
+def tiles_DS():
+    data = []
+    for tile in Tile.tiles:
+        data.append(tile.to_dict())
+
     try:
-        with open("Datasave/Routines.json", "r", encoding="utf-8") as f:
+        with open("Datasave/Tiles.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print("Tiles successfully saved to Projects.json")
+    except Exception as e:
+        print(f"Error saving projects: {e}")
+
+# def load_tiles_DS():
+#     try:
+#         with open("Datasave/Tiles.json", "r", encoding="utf-8") as f:
+#             data = json.load(f)
+
+#         for routine in data:
+#             Tile(data["relative_x"], data["relative_y"], TILE_COL, data["structure"])
+
+#         print(f"Loaded tiles successfully")
+#     except Exception as e:
+#         print(f"Error loading routines: {e}")
+#         return False
+def load_tiles_DS():
+    try:
+        with open("Datasave/Tiles.json", "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        for routine in data:
-            Routine(routine["name"], routine["frequency"], routine["description"], "")
+        Tile.tiles.clear()           # Clear old tiles to prevent duplication
+        Tile.center_tile = None
+        Tile.lastIndexP = 0          # if you ever add index to tiles
 
-        print(f"Loaded projects successfully")
+        for tile_data in data:
+            # Create tile WITHOUT structure first
+            tile = Tile(
+                relative_x=tile_data["relative_x"],
+                relative_y=tile_data["relative_y"],
+                color=TILE_COL,
+                priority=1
+            )
+
+            # If there's saved structure data → recreate it AFTER tile exists
+            if tile_data.get("structure"):
+                struct_data = tile_data["structure"]
+                struct_type = Structure.types[struct_data["type_name"]]
+                structure = Structure(tile, struct_type)  # ← pass the tile!
+                structure.level = struct_data["level"]
+                structure.points_needed = struct_data["points_needed"]
+                structure.upgrade_time = struct_data["upgrade_time"]
+                tile.structure = structure
+
+                # Recreate floors (basic version – assumes only bottom image for now)
+                # For full floors you'd need to save list of floor levels/paths
+                for level in range(2, structure.level + 1):
+                    path = struct_type["top"] if level == structure.level else struct_type["mid"]
+                    Floor(tile.get_pos(), level, struct_type["level_height"], struct_type["bottom_level_height"], path)
+
+        print(f"Loaded {len(Tile.tiles)} tiles successfully")
+    except FileNotFoundError:
+        print("No Tiles.json found – starting fresh")
     except Exception as e:
-        print(f"Error loading routines: {e}")
-        return False
+        print(f"Error loading tiles: {e}")
 
 def make(type=None):
     task = None
@@ -290,6 +342,8 @@ delete_routine_button = Button("Buttons/trash_button.png", 100, 790, priority=12
 add_routine_button = Button("Buttons/add_button.png", 100, 750, priority=2, clip_rect=menu_clip_rect)
 complete_routine_button = Button("placeholder.png", 100, 150, tint=(0,255,0))
 cancel_routine_button = Button("placeholder.png", 200, 150, tint=(255,0,0))
+
+building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
 
 complete_project_button.set_active(False)
 delete_project_button.set_active(False)
@@ -346,7 +400,7 @@ rmenu = PopUp(
 
 tile_data_tab = PopUp(
     base=RectSprite((30,30,30,180), SCREEN_WIDTH, 300, 0, SCREEN_HEIGHT-300),
-    items=[],
+    items=[building_button],
     priority=8
 )
 
@@ -482,6 +536,9 @@ task_selected = None
 
 load_projects_DS()
 load_routine_DS()
+load_tiles_DS()
+if len(Tile.tiles) == 0:
+    for _ in range(5): addTile()
 
 while running:
     mouse_pos = pygame.mouse.get_pos()
@@ -493,6 +550,7 @@ while running:
             savePoints()
             project_DS()
             routine_DS()
+            tiles_DS()
         if event.type == pygame.MOUSEBUTTONDOWN:
             button_down_time = time.time()
             dragging = True
@@ -609,8 +667,26 @@ while running:
         show_info_for_task(task)
     if Tile.selected != None:
         tile_data_tab.set_active(True)
-        building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12)
-        display_text("Empty tile", main_font, (30, SCREEN_HEIGHT-250))
+        tile = Tile.selected
+
+        text = "Empty tile"
+        if tile.structure == None:
+            building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
+        else:
+            text = f"{tile.structure.name}, Level {tile.structure.level}"
+            building_button = Button("placeholder.png", 60, SCREEN_HEIGHT-150, priority=12, tint=(255,255,255))
+        points_needed = tile.get_points_needed()
+    
+        def build():
+            global points
+            if points > points_needed:
+                if (tile.structure != None and time.time() - tile.structure.upgrade_time > 0.5) or tile.structure == None:
+                    points -= points_needed      
+                    Tile.build_structure(tile)
+            else: print("Not enough points")
+
+        building_button.set_function(build)
+        display_text(text, main_font, (30, SCREEN_HEIGHT-250))
     else:
         tile_data_tab.set_active(False)
     # if time_list[-1] == "":
@@ -642,6 +718,10 @@ while running:
         delete_routine_button.set_active(False)
 
         for x in info_text_boxes: x.set_active(False)
+
+    if building_button != None and not Tile.selected:
+        print(time.time(), "j")
+        building_button.set_active(False)
 
     pygame.display.flip()
     Project.update_names()

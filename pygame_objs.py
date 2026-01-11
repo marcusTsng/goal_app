@@ -10,7 +10,7 @@ SELECTION_TINT = (180,180,180)
 TAB = "main" 
 
 # SETUP
-import pygame, random
+import pygame, random, time
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # FUNCTIONS
@@ -415,12 +415,13 @@ class Tile(Button):
     selector.set_active(False)
     selected = None
     
-    def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL, priority=1):
+    def __init__(self, relative_x = 0, relative_y = 0, color=TILE_COL, priority=1, structure = None):
         super().__init__("Terrain/Tile.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, color, Tile.select_tile, self, True, priority)
         self.relative_x = relative_x
         self.relative_y = relative_y
         self.building = None
         self.floors = 0
+        self.structure = structure
         if not Tile.center_tile: 
             Tile.center_tile = self
         else:
@@ -464,12 +465,190 @@ class Tile(Button):
                     isTaken = True
         return ntx, nty
     
+    @staticmethod
+    def build_structure(tile):
+        if tile.structure == None:
+            tile.structure = Structure(tile, Structure.types["hut"])
+        else:
+            tile.structure.upgrade()
+    
+    def get_points_needed(self):
+        if self.structure == None: return 5
+        else: return self.structure.points_needed
+
+    def to_dict(self):
+        """Convert this Project to a JSON-serializable dictionary"""
+        structure = None
+        if self.structure: structure = self.structure.to_dict()             
+        return {
+            "relative_x": self.relative_x,
+            "relative_y": self.relative_y,
+            "structure": structure
+        }
+
+    # @classmethod
+    # def from_dict(cls, data):
+    #     """Reconstruct a Project from a dictionary (used when loading)"""
+    #     # Create new instance
+    #     project = cls(
+    #         relative_x = data["relative_x"],
+    #         relative_y = data["relative_y"],
+    #         structure = data["structure"].from_dict(),
+    #     )
+
+    #     # Restore extra fields (index is important!)
+    #     project.index = data.get("index", 0)
+
+    #     return project
+    @classmethod
+    def from_dict(cls, data):
+        tile = cls(
+            relative_x=data["relative_x"],
+            relative_y=data["relative_y"]
+        )
+        # Do NOT recreate structure here — it's done in load_tiles_DS
+        return tile
+    
 # class Structure(ImageSprite):
 #     types = {
-#         "hut" : ["Structures/Hut/hut_single_floor", "Structures/Hut/hut_mid_floor", "Structures/Hut/hut_top_floor"]
+#         "hut" : {
+#             "name": "Hut",
+#             "upgraded_name": "Tower",
+#             "level_height": 8,
+#             "bottom_level_height": 11,
+#             "bottom" : "Structures/Hut/hut_single_floor.png", 
+#             "mid" : "Structures/Hut/hut_mid_floor.png", 
+#             "top" :"Structures/Hut/hut_top_floor.png"
+#         }
 #     }
 
-    # def __init__(self, tile : Tile, structure_type=types.hut):
-    #     pos=tile.get_pos()
-    #     super().__init__(structure_type[0], pos[0], pos[1], use_offset=True)
-    #     self.priority = tile.priority
+#     def __init__(self, tile : Tile, structure_type=types["hut"]):
+#         pos=tile.get_pos()
+#         super().__init__(structure_type["bottom"], pos[0], pos[1], use_offset=True)
+#         self.priority = tile.priority
+#         self.level = 1
+#         self.tile = tile
+#         self.points_needed = 5
+#         self.upgrade_time = time.time()
+#         self.name = structure_type["name"]
+#         self.struct = structure_type
+
+#     def upgrade(self):
+#         if time.time() - self.upgrade_time > 0.5:
+#             self.upgrade_time = time.time()
+#             self.points_needed += 5
+#             self.level += 1
+#             self.name = self.struct["upgraded_name"]
+#             Floor(self.tile.get_pos(), self.level, self.struct["level_height"], self.struct["bottom_level_height"], self.struct["top"])
+
+#     def to_dict(self):
+#         """Convert this Project to a JSON-serializable dictionary"""
+#         return {
+#             # FINISH THIS            
+#         }
+
+#     @classmethod
+#     def from_dict(cls, data):
+#         """Reconstruct a Project from a dictionary (used when loading)"""
+#         # Create new instance
+#         project = cls(
+#             # FINISH THIS
+#         )
+
+#         # Restore extra fields (index is important!)
+#         project.index = data.get("index", 0)
+
+#         return project
+
+# class Floor(ImageSprite):
+#     def __init__(self, base_pos, level, level_height, init_level_height, path):
+#         add = level * level_height if level != 2 or level != 3 else init_level_height
+#         x = base_pos[0]
+#         y = base_pos[1]-add
+#         super().__init__(path, x, y, use_offset=True, priority=1)
+class Structure(ImageSprite):
+    types = {
+        "hut" : {
+            "name": "Hut",
+            "upgraded_name": "Tower",
+            "level_height": 8,
+            "bottom_level_height": 11,
+            "bottom" : "Structures/Hut/hut_single_floor.png", 
+            "mid" : "Structures/Hut/hut_mid_floor.png", 
+            "top" :"Structures/Hut/hut_top_floor.png"
+        }
+    }
+
+    def __init__(self, tile : Tile, structure_type=types["hut"]):
+        pos=tile.get_pos()
+        super().__init__(structure_type["bottom"], pos[0], pos[1], use_offset=True)
+        self.priority = tile.priority
+        self.level = 1
+        self.tile = tile
+        self.points_needed = 5
+        self.upgrade_time = time.time()
+        self.name = structure_type["name"]
+        self.struct = structure_type
+
+    def upgrade(self):
+        if time.time() - self.upgrade_time > 0.5:
+            self.upgrade_time = time.time()
+            self.points_needed += 5
+            self.level += 1
+            self.name = self.struct["upgraded_name"]
+            Floor(self.tile.get_pos(), self.level, self.struct["level_height"], self.struct["bottom_level_height"], self.struct["top"])
+
+    def to_dict(self):
+        """Convert this Project to a JSON-serializable dictionary"""
+        return {
+            "type_name": "hut",  # currently only hut exists - change when adding more types
+            "level": self.level,
+            "points_needed": self.points_needed,
+            "upgrade_time": self.upgrade_time,
+            # we don't need to save tile reference - we rebuild from tile data
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """Reconstruct a Project from a dictionary (used when loading)"""
+        # Note: this assumes the tile already exists when loading
+        # You'll need to call this after the tile is recreated
+        # For now we return None - real implementation needs tile context
+        # In practice you should create Structure after loading the tile
+        raise NotImplementedError(
+            "Structure.from_dict needs the associated Tile instance. "
+            "Call manually after tile reconstruction."
+        )
+        # Example of how it would look if tile were passed:
+        # tile = ... # get tile from loaded data
+        # structure_type = cls.types[data["type_name"]]
+        # instance = cls(tile, structure_type)
+        # instance.level = data["level"]
+        # instance.points_needed = data["points_needed"]
+        # instance.upgrade_time = data["upgrade_time"]
+        # return instance
+
+class Floor(ImageSprite):
+    def __init__(self, base_pos, level, level_height, init_level_height, path):
+        add = level * level_height if level != 2 or level != 3 else init_level_height
+        x = base_pos[0]
+        y = base_pos[1]-add
+        super().__init__(path, x, y, use_offset=True, priority=1)
+
+    def to_dict(self):
+        return {
+            "level": self.level,  # if you added self.level = level in __init__
+            "path": self.img_path,  # you'll need to store this or derive it
+            "x": self.rect.centerx,
+            "y": self.rect.centery
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            base_pos=(data["x"], data["y"]),
+            level=data["level"],
+            level_height=8,                    # hardcoded for hut - improve later
+            init_level_height=11,              # hardcoded for hut
+            path=data["path"]                  # assumes you saved the path
+        )

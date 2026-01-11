@@ -1,0 +1,47 @@
+[
+  {
+    "relative_x": 0,
+    "relative_y": 0,
+    "structure": null
+  },
+  {
+    "relative_x": 1,
+    "relative_y": 0,
+    "structure": {
+      "type_name": "hut",
+      "level": 1,
+      "points_needed": 5,
+      "upgrade_time": 1768138158.971429
+    }
+  },
+  {
+    "relative_x": 1,
+    "relative_y": -1,
+    "structure": null
+  },
+  {
+    "relative_x": 2,
+    "relative_y": 0,
+    "structure": null
+  },
+  {
+    "relative_x": 2,
+    "relative_y": -1,
+    "structure": {
+      "type_name": "hut",
+      "level": 1,
+      "points_needed": 5,
+      "upgrade_time": 1768138149.1699011
+    }
+  },
+  {
+    "relative_x": 0,
+    "relative_y": 0,
+    "structure": {
+      "type_name": "hut",
+      "level": 2,
+      "points_needed": 10,
+      "upgrade_time": 1768138150.5528681
+    }
+  }
+]
