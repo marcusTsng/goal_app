@@ -1,24 +1,16 @@
 [
   {
-    "name": "New Routine",
-    "frequency": 10000000000000000,
-    "time": 1768138172.0919209,
+    "name": "test routine 5",
+    "frequency": 1,
+    "time": 1768138359.914325,
     "description": "Enter a description here",
     "type": "",
     "index": 0
   },
   {
-    "name": "bitch fuck",
-    "frequency": 0,
-    "time": 1768138172.091928,
-    "description": "Enter a description here",
-    "type": "",
-    "index": 1
-  },
-  {
     "name": "New Routine",
     "frequency": 10000000000000000,
-    "time": 1768138172.0919302,
+    "time": 1768138359.914334,
     "description": "Enter a description here",
     "type": "",
     "index": 2

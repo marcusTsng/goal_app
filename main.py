@@ -76,8 +76,6 @@ class Task:
         Task.completedTasks.append(self)
         Task.tasks.pop(self.index)
     def delete(self): 
-        # LIAM
-        # complete this
         del self
 
     @staticmethod
@@ -89,6 +87,7 @@ class Routine(Task):
     routines = []
     routineNames = []
     completedRoutines = []
+    deletedRoutines = []
     lastIndexR = 0
     def __init__(self, name, frequency, description, type):
         super().__init__(name, description, type)
@@ -107,6 +106,10 @@ class Routine(Task):
         Routine.routineNames = []
         for x in Routine.routines: 
             Routine.routineNames.append(x.name)
+    def delete(self):
+        Routine.deletedRoutines.append(self)
+        Routine.routines.remove(self)
+        deselect_task_in_menu()
 
     def to_dict(self):
         """Convert this Project to a JSON-serializable dictionary"""
@@ -477,7 +480,7 @@ def show_info_for_task(task =None):
         if isinstance(task, Routine):
             time_text_box.text = str(task.frequency)
             delete_routine_button.set_active(True)
-            delete_routine_button.set_function(task.delete())
+            delete_routine_button.set_function(task.delete)
             x = task.index
         else: 
             complete_project_button.set_active(True)
