@@ -394,6 +394,11 @@ def show_info_for_task(task =None):
         task.frequency = f
         Routine.frequencies[find_in_array(Routine.routines, task)] = f
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+        task.frequency = time_text_box.text
+        Routine.frequencies[find_in_array(Routine.routines, task)] = task.frequency
+>>>>>>> Stashed changes
 =======
         task.frequency = time_text_box.text
         Routine.frequencies[find_in_array(Routine.routines, task)] = task.frequency
