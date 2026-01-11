@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import time
+import json
 from pygame_objs import *
 pygame.init()
 pygame.display.set_caption("VOYAGE")
@@ -139,6 +140,35 @@ class Project(Task):
         for x in Project.projects: 
             Project.projectNames.append(x.name)
 
+    def to_dict(self):
+        """Convert this Project to a JSON-serializable dictionary"""
+        return {
+            "name": self.name,
+            "duration": self.duration,
+            "description": self.description,
+            "type": self.type,               # assuming Task has this attribute
+            "index": self.index,
+            # Add any other important Task/Project attributes here
+            # e.g. "status": self.status if exists
+            # "created": self.created.isoformat() if you have datetime
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """Reconstruct a Project from a dictionary (used when loading)"""
+        # Create new instance
+        project = cls(
+            name=data["name"],
+            duration=data["duration"],
+            description=data["description"],
+            type=data["type"]
+        )
+
+        # Restore extra fields (index is important!)
+        project.index = data.get("index", 0)
+
+        return project
+
 # pp = Project("pp1", 10, "ahfuwuwf", "Work")
 # dih = Routine("pp2", 10, "fwhifwi", "School")
 
@@ -165,22 +195,33 @@ center_tile.add_floor()
 # tile3 = Tile(1, 0)
 # tile4 = Tile(-1, 0)
 
-def routine_DS():
-    timings = open("Routine timings", "a")
-    timings.write(str(time.time()) + "\\n")
-    timings.close()
-    frequencies = open("Routine frequencies", "a")
-    Routine.frequencies[-1] = str(Routine.frequencies[-1])
-    frequencies.write(Routine.frequencies[-1] + "\\n")
-    Routine.frequencies[-1] = float(Routine.frequencies[-1])
-    frequencies.close()
-    names = open("Routines", "a")
-    names.write(Routine.routineNames[-1])
-    names.close()
-    descriptions = open("Routine descriptions", "a")
-    descriptions.write(Routine.routineDescs[-1])
-    descriptions.close()
+def project_DS():
+    data = []
+    for project in Project.projects:
+        data.append(project.to_dict())
 
+    try:
+        with open("Datasave/Projects.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print("Projects successfully saved to Projects.json")
+    except Exception as e:
+        print(f"Error saving projects: {e}")
+
+def load_projects_DS():
+    try:
+        with open("Datasave/Projects.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        for project in data:
+            # print(proj_data)
+            # project = Project.from_dict(proj_data)
+            print(project)
+            Project(project["name"], project["duration"], project["description"], "")
+
+        print(f"Loaded projects successfully")
+    except Exception as e:
+        print(f"Error loading projects: {e}")
+        return False
 
 def make(type=None):
     #Make user input stuff (MARCUS)
@@ -194,7 +235,6 @@ def make(type=None):
     elif type == "Routine": 
         task = Routine("New Routine", 10000000000000000, "Enter a description here", "Sport")
         select_from_index(len(Routine.routines) - 1, task.name)
-        routine_DS()
 
 add_names = open("Routines", "r")
 name_list = add_names.readlines()
@@ -435,6 +475,9 @@ background_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 draw_gradient(background_surface, (0,23,45), (0,0,0))
 
 task_selected = None
+
+load_projects_DS()
+
 while running:
     mouse_pos = pygame.mouse.get_pos()
     current_tab = get_tab()
@@ -443,6 +486,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             savePoints()
+            project_DS()
         if event.type == pygame.MOUSEBUTTONDOWN:
             button_down_time = time.time()
             dragging = True
@@ -589,8 +633,8 @@ while running:
                 else: print("Routine was not completed")
 
                 time_list[i] = time.time()
-                check_time.truncate()
-                check_time.writelines(time_list)
+                # check_time.truncate()
+                # check_time.writelines(time_list)
     if current_tab == "main":
         display_text(str(points), points_font, (SCREEN_WIDTH-75, 25))
 
